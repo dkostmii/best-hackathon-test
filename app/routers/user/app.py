@@ -1,12 +1,13 @@
+from uuid import UUID
+
 from fastapi import APIRouter, Depends, Form, HTTPException, Response, Request
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
-from starlette.responses import JSONResponse
+from starlette.responses import RedirectResponse
 
-from app.dependencies import get_current_user, get_db, templates
+from app.dependencies import get_current_user, get_db, handle_400_errors, templates
 from app.routers.user.crud import UserCRUD, SessionCRUD
-from app.routers.user.hashing import Hasher
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema
 
@@ -17,14 +18,32 @@ user_router = APIRouter(
 
 
 @user_router.get("/")
-def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+async def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     users = UserCRUD.get_users(db)
 
     return {"users": users}
 
 
-@user_router.get("/register", status_code=201)
-def create_user(request: Request):
+@user_router.get("/{pk}")
+async def get_user(
+        request: Request,
+        pk: UUID,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user),
+):
+    user = UserCRUD.get_user_by_id(pk, db)
+
+    return templates.TemplateResponse(
+        "user/user.html",
+        {
+            "request": request,
+            "user": user,
+        },
+    )
+
+
+@user_router.get("/register")
+async def create_user_page(request: Request):
     return templates.TemplateResponse(
         "auth/register.html",
         {
@@ -33,8 +52,8 @@ def create_user(request: Request):
     )
 
 
-@user_router.post("/register", status_code=201)
-def create_user(
+@user_router.post("/register")
+async def create_user(
         request: Request,
         username: str = Form(...),
         password: str = Form(...),
@@ -43,53 +62,49 @@ def create_user(
 ):
     try:
         data = UserRegistrationSchema(username=username, password=password, is_staff=is_staff)
-
         user = UserCRUD.create_user(db, data)
 
         if user is False:
             raise HTTPException(status_code=400, detail="User with this username already exists")
 
-    except ValidationError as e:
-        errors = e.errors()
+    except (ValidationError, HTTPException) as e:
+        return handle_400_errors(request, e, "auth/register.html")
 
-        return templates.TemplateResponse(
-            name="auth/register.html",
-            context={"request": request, "errors": errors},
-            status_code=400
-        )
-
-    except HTTPException as e:
-        return templates.TemplateResponse(
-            name="auth/register.html",
-            context={"request": request, "errors": [e.detail]},
-            status_code=e.status_code
-        )
     else:
-        session_token = SessionCRUD.create_session_token(user, db)
-        response = templates.TemplateResponse(
-            "base.html",
-            {"request": request}
-        )
-        response.set_cookie(key="session_id", value=session_token)
-
+        response = UserCRUD.login_user_html(request, user, db, templates)
         return response
 
 
+@user_router.get("/login")
+async def login_page(request: Request):
+    return templates.TemplateResponse(
+        "auth/login.html",
+        {
+            "request": request,
+        },
+    )
+
+
 @user_router.post("/login")
-def login(form_data: UserLoginSchema, db: Session = Depends(get_db)):
-    user = UserCRUD.get_user_by_username(db, form_data.username)
+async def login(
+        request: Request,
+        username: str = Form(...),
+        password: str = Form(...),
+        db: Session = Depends(get_db)
+):
+    try:
+        form_data = UserLoginSchema(username=username, password=password)
+        user = UserCRUD.authenticate_user(form_data, db)
 
-    if not user:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User with this username does not exist")
+        if not user:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
 
-    if not Hasher.verify_password(form_data.password, user.password):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password")
+    except (ValidationError, HTTPException) as e:
+        return handle_400_errors(request, e, "auth/login.html")
 
-    session_token = SessionCRUD.create_session_token(user, db)
-    response = JSONResponse({"message": "Logged in successfully"})
-    response.set_cookie(key="session_id", value=session_token)
-
-    return response
+    else:
+        response = UserCRUD.login_user_html(request, user, db, templates)
+        return response
 
 
 @user_router.post("/logout")
@@ -101,4 +116,4 @@ async def logout(
     SessionCRUD.delete_all_user_auth_session(current_user, db)
     response.delete_cookie("session_id")
 
-    return {"message": "Logged out successfully"}
+    return RedirectResponse("/", status_code=303)
