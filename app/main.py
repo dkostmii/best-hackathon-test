@@ -11,7 +11,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 @base_app.get("/")
-async def root(request: Request) -> templates.TemplateResponse:
+async def root(request: Request):
     return templates.TemplateResponse(
         "base.html",
         {
