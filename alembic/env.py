@@ -8,6 +8,7 @@ from alembic import context
 from settings import DB_URL
 from database import Base
 from app.routers.user.model import Base as base_user
+from app.routers.request_task.model import Base as base_request_task
 
 cmd_args = context.get_x_argument(as_dictionary=True)
 

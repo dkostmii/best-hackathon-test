@@ -1,6 +1,7 @@
 import uuid
 
 from sqlalchemy import Column, String, DateTime, Boolean, text, UUID
+from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -14,3 +15,4 @@ class User(Base):
     date_joined = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     is_staff = Column(Boolean, default=False)
     is_deleted = Column(Boolean, default=False)
+    request_tasks = relationship("ReqestTask", back_populates="creator")
