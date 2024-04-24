@@ -1,9 +1,13 @@
 from fastapi import Cookie, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
+from starlette.templating import Jinja2Templates
 
 from app.routers.user.crud import SessionCRUD
 from database import SessionLocal
+
+
+templates = Jinja2Templates(directory="templates")
 
 
 def get_db():
