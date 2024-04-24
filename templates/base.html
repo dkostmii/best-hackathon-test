@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% with title="Home Page" %}
+    {% include 'head.html' %}
+{% endwith %}
 <body>
     {% include 'header.html' %}
     <main>
