@@ -31,7 +31,7 @@
                         </div>
                         <div class="form-group mb-3">
                             <div class="form-check" aria-describedby="is_staff_help">
-                                <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff" />
+                                <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff" value="False" />
                                 <label for="is_staff" class="form-check-label">Staff</label>
                             </div>
                             <div id="is_staff_help" class="form-text">
@@ -39,9 +39,19 @@
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
-                        {% if error %}
-                        <div class="alert alert-danger">
-                            {{ error }}  <!-- TODO: SHOW ERRORS -->
+                        {% if errors %}
+                        <div class="alert alert-danger mt-4">
+                            {% for error in errors %}
+                                {% if "loc" in error %}
+                                    <ul>
+                                        {% for l in error.loc %}
+                                            <li><strong>{{ l }}:</strong> {{error.msg}}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    {{ error }}
+                                {% endif %}
+                            {% endfor %}
                         </div>
                         {% endif %}
                     </form>

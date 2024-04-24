@@ -38,7 +38,7 @@ def create_user(
         request: Request,
         username: str = Form(...),
         password: str = Form(...),
-        is_staff: bool = Form(...),
+        is_staff: bool = Form(False),
         db: Session = Depends(get_db)
 ):
     try:
@@ -51,11 +51,10 @@ def create_user(
 
     except ValidationError as e:
         errors = e.errors()
-        messages = [error["msg"] for error in errors]
 
         return templates.TemplateResponse(
             name="auth/register.html",
-            context={"request": request, "errors": messages},
+            context={"request": request, "errors": errors},
             status_code=400
         )
 
@@ -69,7 +68,7 @@ def create_user(
         session_token = SessionCRUD.create_session_token(user, db)
         response = templates.TemplateResponse(
             "base.html",
-            {"request": request, "error_message": "User created successfully"}
+            {"request": request}
         )
         response.set_cookie(key="session_id", value=session_token)
 
