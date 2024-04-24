@@ -62,7 +62,7 @@ localhost:8000/docs - Swagger UI(documentation)
 1. Add new model to alembic/env.py, just import Base
 2. Create a migration
 ```bash
-utils/create_migration.sh migration message
+utils/create_migration.sh migration_message
 ```
 migration will up automatically after running the app
 
