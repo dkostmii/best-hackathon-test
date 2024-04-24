@@ -72,7 +72,7 @@ class UserCRUD:
         session_token = SessionCRUD.create_session_token(user, db)
         response = templates.TemplateResponse(
             response_page,
-            {"request": request}
+            {"request": request, "current_user": user}
         )
         response.set_cookie(key="session_id", value=session_token)
 

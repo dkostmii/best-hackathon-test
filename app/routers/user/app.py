@@ -1,3 +1,4 @@
+from typing import Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Response, Request
@@ -24,26 +25,11 @@ async def get_users(db: Session = Depends(get_db), current_user: User = Depends(
     return {"users": users}
 
 
-@user_router.get("/{pk}")
-async def get_user(
-        request: Request,
-        pk: UUID,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(get_current_user),
-):
-    user = UserCRUD.get_user_by_id(pk, db)
-
-    return templates.TemplateResponse(
-        "user/user.html",
-        {
-            "request": request,
-            "user": user,
-        },
-    )
-
-
 @user_router.get("/register")
-async def create_user_page(request: Request):
+async def create_user_page(request: Request, current_user: Optional[User] = Depends(get_current_user)):
+    if current_user:
+        return RedirectResponse("/", status_code=303)
+
     return templates.TemplateResponse(
         "auth/register.html",
         {
@@ -76,7 +62,10 @@ async def create_user(
 
 
 @user_router.get("/login")
-async def login_page(request: Request):
+async def login_page(request: Request, current_user: Optional[User] = Depends(get_current_user)):
+    if current_user:
+        return RedirectResponse("/", status_code=303)
+
     return templates.TemplateResponse(
         "auth/login.html",
         {
@@ -110,10 +99,32 @@ async def login(
 @user_router.post("/logout")
 async def logout(
         response: Response,
-        current_user: User = Depends(get_current_user),
+        current_user: Optional[User] = Depends(get_current_user),
         db: Session = Depends(get_db),
 ):
     SessionCRUD.delete_all_user_auth_session(current_user, db)
     response.delete_cookie("session_id")
 
     return RedirectResponse("/", status_code=303)
+
+
+@user_router.get("/{pk}")
+async def get_user(
+    request: Request,
+    pk: UUID,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user),
+):
+    if current_user is None or not current_user.is_staff:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are unathorized to access this resource")
+
+    user = UserCRUD.get_user_by_id(pk, db)
+
+    return templates.TemplateResponse(
+        "user/user.html",
+        {
+            "request": request,
+            "user": user,
+            "current_user": current_user
+        },
+    )

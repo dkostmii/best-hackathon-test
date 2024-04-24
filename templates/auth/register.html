@@ -47,4 +47,13 @@
         </div>
     </div>
 </div>
+<script>
+    const is_staff_input = document.getElementById("is_staff")
+
+    if (is_staff_input) {
+        is_staff_input.addEventListener("change", (e) => {
+            is_staff_input.setAttribute("value", is_staff_input.checked)
+        })
+    }
+</script>
 {% endblock %}

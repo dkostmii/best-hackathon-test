@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>{{ error.title }}</title>
+{% endblock %}
+
+{% block content %}
+<div class="text-center h-100 d-flex flex-column justify-content-center">
+    <h1>{{ error.title }}</h1>
+    {% if error.description %}
+    <p>{{ error.description }}</p>
+    {% endif %}
+</div>
+{% endblock %}
