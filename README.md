@@ -1,5 +1,11 @@
 # best-hackathon-test
 
+## Development Rules
+Run flake8 before pushing
+```bash
+flake8
+```
+
 ## Installing using GitHub:
 
 1. Clone the repository:
