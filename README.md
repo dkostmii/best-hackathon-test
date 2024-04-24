@@ -33,3 +33,34 @@ venv\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+
+## Docker
+
+Docker should be installed
+
+1. to build and run the app
+```bash
+utils/up_services.sh build
+```
+3. to run the app
+```bash
+utils/up_services.sh
+```
+
+## Getting access
+
+localhost:8000/docs - Swagger UI(documentation)
+
+## DATABASE
+
+1. Add new model to alembic/env.py, just import Base
+2. Create a migration
+```bash
+utils/create_migration.sh migration message
+```
+migration will up automatically after running the app
+
+To downgrade the migration
+```bash
+utils/downgrade_migration.sh
+```
