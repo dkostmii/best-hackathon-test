@@ -18,4 +18,3 @@ async def root(request: Request) -> templates.TemplateResponse:
             "request": request,
         },
     )
-
