@@ -1,21 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RequestTask List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .task-list-container {
-            max-width: 600px;
-            margin: auto;
-            margin-top: 50px;
-        }
-        .task-list-item {
-            margin-bottom: 10px;
-        }
-    </style>
-</head>
+{% with title="Request Task List" %}
+    {% include 'head.html' %}
+{% endwith %}
 <body>
     <div class="container">
         <div class="row">
