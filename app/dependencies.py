@@ -19,9 +19,13 @@ async def get_current_user(session_id: str = Cookie(None), db: Session = Depends
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
     )
+
     if session_id is None:
         raise credentials_exception
+
     user = SessionCRUD.get_user_from_session_auth(session_id, db)
+
     if user is None:
         raise credentials_exception
+
     return user

@@ -11,6 +11,7 @@ class RequestTaskCRUD:
     @staticmethod
     def get_request_tasks(db: Session, page: int, limit: int):
         offset = (page - 1) * limit
+
         return db.query(RequestTask).offset(offset).limit(limit).all()
 
     @staticmethod
@@ -28,4 +29,5 @@ class RequestTaskCRUD:
         db.add(request_task)
         db.commit()
         db.refresh(request_task)
+
         return request_task

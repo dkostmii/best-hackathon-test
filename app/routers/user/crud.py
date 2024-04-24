@@ -48,6 +48,7 @@ class SessionCRUD:
         session_auth_model = SessionModel(session_token=session_token, user=user)
         db.add(session_auth_model)
         db.commit()
+
         return session_token
 
     @staticmethod
@@ -58,5 +59,6 @@ class SessionCRUD:
     @staticmethod
     def get_user_from_session_auth(session_token: str, db: Session) -> User:
         session_auth = db.query(SessionModel).filter_by(session_token=session_token).first()
+
         if session_auth:
             return session_auth.user
