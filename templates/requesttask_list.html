@@ -1,47 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-{% with title="Request Task List" %}
-    {% include 'head.html' %}
-{% endwith %}
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8 offset-md-2 task-list-container">
-                <h2 class="text-center mb-4">RequestTask List</h2>
-                <form id="taskForm">
-                    <div class="form-group">
-                        <label for="taskName">Task Name</label>
-                        <input type="text" class="form-control" id="taskName" name="taskName">
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDescription">Task Description</label>
-                        <textarea class="form-control" id="taskDescription" name="taskDescription"></textarea>
-                    </div>
-                    <button type="button" class="btn btn-primary" onclick="createTask()">Create</button>
-                </form>
-            </div>
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Request Task List</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2 task-list-container">
+            <h2 class="text-center mb-4">RequestTask List</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" class="form-control" id="taskName" name="taskName">
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Task Description</label>
+                    <textarea class="form-control" id="taskDescription" name="taskDescription"></textarea>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="createTask()">Create</button>
+            </form>
         </div>
     </div>
-    <script>
-        function createTask() {
-            var taskName = document.getElementById('taskName').value;
-            var taskDescription = document.getElementById('taskDescription').value;
-            fetch('/tasks', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ name: taskName, description: taskDescription }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                // Додаткові дії, наприклад, оновлення списку тасок
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
-</body>
-</html>
+</div>
+<script>
+    function createTask() {
+        var taskName = document.getElementById('taskName').value;
+        var taskDescription = document.getElementById('taskDescription').value;
+        fetch('/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ name: taskName, description: taskDescription }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            // Додаткові дії, наприклад, оновлення списку тасок
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

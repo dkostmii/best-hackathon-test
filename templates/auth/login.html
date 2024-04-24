@@ -1,45 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-{% with title="Login" %}
-    {% include 'head.html' %}
-{% endwith %}
-<body>
-    {% include 'header.html' %}
-    <main>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6 offset-md-3 form-container">
-                    <h2 class="text-center mb-4">Login</h2>
-                    <form action="/users/login" method="POST" enctype="application/x-www-form-urlencoded">
-                        <div class="form-group mb-3">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
-                        </div>
-                        <div class="form-group mb-3">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Login</button>
-                        {% if errors %}
-                        <div class="alert alert-danger mt-4">
-                            {% for error in errors %}
-                                {% if "loc" in error %}
-                                    <ul>
-                                        {% for l in error.loc %}
-                                            <li><strong>{{ l }}:</strong> {{error.msg}}</li>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    {{ error }}
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                        {% endif %}
-                    </form>
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Login</title>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3 form-container">
+            <h2 class="text-center mb-4">Login</h2>
+            <form action="/users/login" method="POST" enctype="application/x-www-form-urlencoded">
+                <div class="form-group mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
                 </div>
-            </div>
+                <div class="form-group mb-3">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                {% if errors %}
+                <div class="alert alert-danger mt-4">
+                    {% for error in errors %}
+                        {% if "loc" in error %}
+                            <ul>
+                                {% for l in error.loc %}
+                                    <li><strong>{{ l }}:</strong> {{error.msg}}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            {{ error }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </form>
         </div>
-    </main>
-    {% include 'footer.html' %}
-</body>
-</html>
+    </div>
+</div>
+{% endblock %}
