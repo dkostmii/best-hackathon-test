@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from app.user.model import User
+from app.routers.user.model import User
 
 
 class UserCRUD:

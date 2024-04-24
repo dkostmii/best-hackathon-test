@@ -2,10 +2,9 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.dependencies import get_db
-from app.user.crud import UserCRUD
+from app.routers.user.crud import UserCRUD
 
 user_router = APIRouter()
-
 
 
 @user_router.get("/users")
