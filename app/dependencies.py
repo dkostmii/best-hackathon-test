@@ -1,4 +1,5 @@
-from fastapi import Cookie, Depends, HTTPException
+from fastapi import Cookie, Depends, HTTPException, Request
+from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
 from starlette.templating import Jinja2Templates
@@ -8,6 +9,16 @@ from database import SessionLocal
 
 
 templates = Jinja2Templates(directory="templates")
+
+
+def handle_400_errors(request: Request, errors: ValidationError | HTTPException, page: str):
+    errors = errors.errors() if isinstance(errors, ValidationError) else [errors.detail]
+
+    return templates.TemplateResponse(
+        name=page,
+        context={"request": request, "errors": errors},
+        status_code=400
+    )
 
 
 def get_db():
