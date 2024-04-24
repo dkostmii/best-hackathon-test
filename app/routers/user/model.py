@@ -1,6 +1,6 @@
 import uuid
 
-from sqlalchemy import Column, String, DateTime, Boolean, text, UUID
+from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean, text, UUID
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -15,4 +15,16 @@ class User(Base):
     date_joined = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
     is_staff = Column(Boolean, default=False)
     is_deleted = Column(Boolean, default=False)
-    request_tasks = relationship("ReqestTask", back_populates="creator")
+
+    request_tasks = relationship("RequestTask", back_populates="creator")
+    sessions = relationship("Session", back_populates="user")
+
+
+class Session(Base):
+    __tablename__ = "sessions"
+
+    user_id = Column(UUID, ForeignKey("base_users.id"), primary_key=True)
+    session_token = Column(String(100), nullable=False, unique=True)
+    created_at = Column(DateTime, server_default=text("CURRENT_TIMESTAMP"))
+
+    user = relationship("User", back_populates="sessions")
