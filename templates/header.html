@@ -1,0 +1,22 @@
+<header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">Navbar</a>
+          {% if user %}
+          <div class="dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{user.username}}
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/users/logout">Logout</a></li>
+            </ul>
+          </div>
+          {% else %}
+          <div class="button-group">
+            <a href="/users/login">Login</a>
+            <a href="/users/register">Register</a>
+          </div>
+          {% endif %}
+        </div>
+      </nav>
+</header>

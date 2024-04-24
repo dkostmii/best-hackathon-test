@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 400px;
+            margin: auto;
+            margin-top: 100px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <main>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 offset-md-3 form-container">
+                    <h2 class="text-center mb-4">Login</h2>
+                    <form action="/users/login" method="POST" enctype="application/x-www-form-urlencoded">
+                        <div class="form-group mb-3">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                        {% if error %}
+                        <div class="alert alert-danger">
+                            {{ error }}
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+    {% include 'footer.html' %}
+</body>
+</html>
