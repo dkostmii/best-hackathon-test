@@ -1,3 +1,4 @@
+from urllib import request
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
@@ -26,7 +27,13 @@ async def get_request_tasks(
 
     request_tasks = RequestTaskCRUD.get_request_tasks(db, page, limit)
 
-    return {"request_tasks": request_tasks}
+    return templates.TemplateResponse(
+        "request_task/create_request_task.html",
+        {
+            "request": request,
+            "request_tasks": request_tasks,
+        },
+    )
 
 
 @request_task_router.get("/request-task/{pk}")
@@ -38,10 +45,15 @@ async def get_request_task(
     if not current_user.is_staff:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
-    request_tasks = RequestTaskCRUD.get_request_task_by_id(pk, db)
+    request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
 
-    return request_tasks
-
+    return templates.TemplateResponse(
+        "request_task/create_request_task.html",
+        {
+            "request": request,
+            "request_task": request_task,
+        },
+    )
 
 @request_task_router.get("/request-tasks/")
 async def create_request_task_page(request: Request):
