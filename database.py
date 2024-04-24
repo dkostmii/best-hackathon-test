@@ -15,3 +15,6 @@ engine = create_engine(
     }
 )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+from sqlalchemy.orm import declarative_base
+Base = declarative_base()
