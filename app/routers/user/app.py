@@ -11,6 +11,7 @@ from app.dependencies import auth_only, get_current_user, get_db, handle_400_err
 from app.routers.user.crud import UserCRUD, SessionCRUD
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema
+from app.routers.request_task.crud import RequestTaskCRUD
 
 user_router = APIRouter(
     prefix="/users",
@@ -119,19 +120,28 @@ async def logout(
 async def get_user(
         request: Request,
         pk: UUID,
+        page: int = Query(1, gt=0),
+        limit: int = Query(10, gt=0),
+        is_done: Optional[bool] = Query(None),
+        priority_id: Optional[int] = Query(None),
+        text_search: Optional[str] = Query(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user),
 ):
     if not current_user.is_staff and pk != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
-    user = UserCRUD.get_user_by_id_include_tasks(pk, db)
+    user = UserCRUD.get_user_by_id(pk, db)
+    request_tasks_result = RequestTaskCRUD.get_request_tasks(
+        db, page, limit, is_done, priority_id, text_search, creator_id=pk
+    )
 
     return templates.TemplateResponse(
         "user/user.html",
         {
             "request": request,
             "user": user,
-            "current_user": current_user
+            "current_user": current_user,
+            "request_tasks": {"pagination": request_tasks_result},
         },
     )
