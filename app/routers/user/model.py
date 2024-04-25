@@ -1,7 +1,9 @@
 import uuid
 
 from sqlalchemy import Column, ForeignKey, String, DateTime, Boolean, text, UUID
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
+
+from app.routers.request_task.model import RequestTask
 
 from database import Base
 
@@ -16,7 +18,7 @@ class User(Base):
     is_staff = Column(Boolean, default=False)
     is_deleted = Column(Boolean, default=False)
 
-    request_tasks = relationship("RequestTask", back_populates="creator")
+    request_tasks: Mapped[list[RequestTask]] = relationship("RequestTask", back_populates="creator")
     sessions = relationship("Session", back_populates="user")
 
 

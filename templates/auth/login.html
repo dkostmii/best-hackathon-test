@@ -19,22 +19,8 @@
                     <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Login</button>
-                {% if errors %}
-                <div class="alert alert-danger mt-4">
-                    {% for error in errors %}
-                        {% if "loc" in error %}
-                            <ul>
-                                {% for l in error.loc %}
-                                    <li><strong>{{ l }}:</strong> {{error.msg}}</li>
-                                {% endfor %}
-                            </ul>
-                        {% else %}
-                            {{ error }}
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </form>
+                {% include 'form_errors.html' %}
+           </form>
         </div>
     </div>
 </div>

@@ -23,5 +23,5 @@ class RequestTask(Base):
     name = Column(String(255), nullable=False)
     description = Column(String, nullable=False)
     created_at = Column(DateTime, default=text("CURRENT_TIMESTAMP"))
-    creator = relationship("User")
+    creator = relationship("User", back_populates="request_tasks")
     priority = relationship("Priority")

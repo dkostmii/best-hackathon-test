@@ -110,24 +110,18 @@ async def logout(
 
 
 @user_router.get("/{pk}")
-@staff_only
+@auth_only
 async def get_user(
     request: Request,
     pk: UUID,
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
-    if current_user.id == pk:
-        return templates.TemplateResponse(
-            "user/user.html",
-            {
-                "request": request,
-                "user": current_user,
-                "current_user": current_user
-            },
-        )
+    if not current_user.is_staff and pk != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
-    user = UserCRUD.get_user_by_id(pk, db)
+    user = UserCRUD.get_user_by_id_include_tasks(pk, db)
+
     return templates.TemplateResponse(
         "user/user.html",
         {
