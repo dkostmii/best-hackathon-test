@@ -25,5 +25,5 @@ class RequestTask(Base):
     done_at = Column(DateTime, nullable=True)
     is_done = Column(Boolean, default=False)
 
-    creator = relationship("User", back_populates="request_tasks")
+    creator = relationship("User")
     priority = relationship("Priority")

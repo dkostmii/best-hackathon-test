@@ -1,7 +1,7 @@
 import secrets
 from uuid import UUID
 
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 from fastapi import Request
 from starlette.templating import Jinja2Templates
 
@@ -12,8 +12,8 @@ from app.routers.user.schema import UserLoginSchema, UserRegistrationSchema
 
 class UserCRUD:
     @staticmethod
-    def get_user_by_id_include_tasks(pk: UUID, db: Session):
-        return db.query(User).options(joinedload(User.request_tasks)).filter_by(id=pk).first()
+    def get_user_by_id(pk: UUID, db: Session):
+        return db.query(User).filter_by(id=pk).first()
 
     @staticmethod
     def get_users(db: Session):
