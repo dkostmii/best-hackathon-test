@@ -1,12 +1,27 @@
 # best-hackathon-test
 
+## Documentation
+all the documentation is available on the localhost:8000/docs
+
+Users data:
+
+- Helper
+    - name: Helper
+    - password: 123123123
+
+- User
+  - name: NeedHelp
+  - password: 123123123
+
+
+
 ## Development Rules
 Run flake8 before pushing
 ```bash
 flake8
 ```
 
-## Installing using GitHub:
+## Installing using GitHub locally:
 
 1. Clone the repository:
 
@@ -40,6 +55,14 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+6. Create a .env file in the root of the project and add the variables, same as in env_sample file
+
+
+7. Run the app
+```bash
+alembic upgrade head &&
+python3 -m uvicorn app.main:base_app --host 0.0.0.0 --port 8000 --reload
+```
 ## Docker
 
 Docker should be installed
@@ -48,14 +71,15 @@ Docker should be installed
 ```bash
 utils/up_services.sh build
 ```
+2. load data to the database
+```bash
+utils/up_services.sh load_data
+```
+
 3. to run the app
 ```bash
 utils/up_services.sh
 ```
-
-## Getting access
-
-localhost:8000/docs - Swagger UI(documentation)
 
 ## DATABASE
 
