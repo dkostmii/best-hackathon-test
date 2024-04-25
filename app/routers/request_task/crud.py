@@ -23,15 +23,6 @@ class PaginatedResult(Generic[T]):
     current_limit: int
 
 
-PRIORITY_ORDER = {
-    "lowest": 1,
-    "low": 2,
-    "medium": 3,
-    "high": 4,
-    "highest": 5
-}
-
-
 class RequestTaskCRUD:
     @staticmethod
     def get_request_tasks(
