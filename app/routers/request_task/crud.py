@@ -1,4 +1,7 @@
+from typing import TypeVar, Generic
+from dataclasses import dataclass
 from uuid import UUID
+import math
 
 from sqlalchemy.orm import Session
 
@@ -6,13 +9,28 @@ from app.routers.request_task.model import RequestTask
 from app.routers.request_task.schema import RequestTaskCreateSchema
 from app.routers.user.model import User
 
+T = TypeVar("T")
+
+
+@dataclass
+class PaginatedResult(Generic[T]):
+    items: list[T]
+    has_next: bool
+    has_prev: bool
+
 
 class RequestTaskCRUD:
     @staticmethod
     def get_request_tasks(db: Session, page: int, limit: int):
         offset = (page - 1) * limit
 
-        return db.query(RequestTask).offset(offset).limit(limit).all()
+        tasks = db.query(RequestTask).all()
+        task_count = len(tasks)
+        page_count = int(math.ceil(task_count / limit))
+
+        items = tasks[offset:offset + limit]
+
+        return PaginatedResult(items=items, has_prev=page > 1, has_next=page < page_count)
 
     @staticmethod
     def get_request_task_by_id(pk: UUID, db: Session):

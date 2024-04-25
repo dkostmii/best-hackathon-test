@@ -1,0 +1,23 @@
+<div class="card d-flex flex-column g-4 p-4">
+    <div class="form-group">
+        <label for="name_{{ request_task.id }}">Title</label>
+        <input type="text" class="form-control" id="name_{{ request_task.id }}" value="{{ request_task.name }}" readonly />
+    </div>
+    {% if full_info %}
+    <div class="form-group">
+        <label for="description_{{ request_task.id }}">Description</label>
+        <textarea class="form-control" id="description_{{ request_task.id }}" readonly>{{ request_task.description }}</textarea>
+    </div>
+    {% endif %}
+    <div class="form-group">
+        <label for="creator_{{ request_task.id }}">Creator</label>
+        <a id="creator_{{ request_task.id }}" href="/users/{{ request_task.creator.id }}">{{ request_task.creator.username }}</a>
+    </div>
+    <p>Priority: <span class="badge text-bg-primary">{{ request_task.priority.name }}</span></p>
+    <p class="text-secondary">Created at: {{ request_task.created_at }}</p>
+    {% if not full_info %}
+    <div class="w-100 d-flex justify-content-end mb-4">
+        <a href="/request-tasks/{{ request_task.id }}" class="btn btn-primary">View task</a>
+    </div>
+    {% endif %}
+</div>
