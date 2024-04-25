@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from uuid import UUID
 import math
 
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 
 from app.routers.request_task.model import Priority, RequestTask
@@ -22,13 +23,27 @@ class PaginatedResult(Generic[T]):
     current_limit: int
 
 
+PRIORITY_ORDER = {
+    "lowest": 1,
+    "low": 2,
+    "medium": 3,
+    "high": 4,
+    "highest": 5
+}
+
+
 class RequestTaskCRUD:
     @staticmethod
-    def get_request_tasks(db: Session, page: int, limit: int, is_done: bool | None):
+    def get_request_tasks(db: Session, page: int, limit: int, is_done: bool | None, priority_id: int | None):
         offset = (page - 1) * limit
 
         tasks = db.query(RequestTask)
-        tasks = tasks.filter_by(is_done=is_done).all() if is_done is not None else tasks.all()
+        tasks = tasks.filter_by(is_done=is_done) if is_done is not None else tasks
+        tasks = (
+            tasks.join(Priority).order_by(desc(RequestTask.priority_id == priority_id)).all()
+            if priority_id is not None
+            else tasks.all()
+        )
 
         task_count = len(tasks)
         page_count = int(math.ceil(task_count / limit))
