@@ -116,7 +116,7 @@ async def get_user(
     current_user: Optional[User] = Depends(get_current_user),
 ):
     if current_user is None or not current_user.is_staff:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are unathorized to access this resource")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
     user = UserCRUD.get_user_by_id(pk, db)
 
