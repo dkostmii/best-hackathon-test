@@ -26,10 +26,11 @@ async def get_request_tasks(
         limit: int = Query(10, gt=0),
         is_done: Optional[bool] = Query(None),
         priority_id: Optional[int] = Query(None),
+        text_search: Optional[str] = Query(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user),
 ):
-    request_tasks_result = RequestTaskCRUD.get_request_tasks(db, page, limit, is_done, priority_id)
+    request_tasks_result = RequestTaskCRUD.get_request_tasks(db, page, limit, is_done, priority_id, text_search)
 
     return templates.TemplateResponse(
         "request_task/list.html",
