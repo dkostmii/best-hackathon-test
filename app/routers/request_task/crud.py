@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import TypeVar, Generic
 from dataclasses import dataclass
 from uuid import UUID
@@ -5,7 +6,7 @@ import math
 
 from sqlalchemy.orm import Session
 
-from app.routers.request_task.model import RequestTask
+from app.routers.request_task.model import Priority, RequestTask
 from app.routers.request_task.schema import RequestTaskCreateSchema
 from app.routers.user.model import User
 
@@ -57,3 +58,18 @@ class RequestTaskCRUD:
         db.refresh(request_task)
 
         return request_task
+
+    @staticmethod
+    def done_request_task(request_task: RequestTask, db: Session):
+        request_task.is_done = True
+        request_task.done_at = datetime.now()
+        db.commit()
+        db.refresh(request_task)
+
+        return request_task
+
+
+class PrioritiesCRUD:
+    @staticmethod
+    def get_priorities(db: Session):
+        return db.query(Priority).all()

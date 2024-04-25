@@ -8,8 +8,7 @@ from starlette.responses import RedirectResponse
 import starlette.status as status
 
 from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, staff_only, templates
-from app.routers.request_task.model import Priority
-from app.routers.request_task.crud import RequestTaskCRUD
+from app.routers.request_task.crud import PrioritiesCRUD, RequestTaskCRUD
 from app.routers.request_task.schema import RequestTaskCreateSchema
 from app.routers.user.model import User
 
@@ -47,7 +46,7 @@ async def create_request_task_page(
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user)
 ):
-    priorities = db.query(Priority).all()
+    priorities = PrioritiesCRUD.get_priorities(db)
 
     return templates.TemplateResponse(
         "request_task/create.html",
@@ -104,3 +103,23 @@ async def get_request_task(
             "current_user": current_user,
         },
     )
+
+
+@request_task_router.post("/{pk}/done")
+@auth_only
+async def done_request_task(
+    pk: UUID,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user)
+):
+    request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
+
+    if request_task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Request task with id {pk} does not exist")
+
+    if request_task.creator.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
+
+    request_task = RequestTaskCRUD.done_request_task(request_task, db)
+
+    return RedirectResponse(f"/request-tasks/{request_task.id}", status_code=303)
