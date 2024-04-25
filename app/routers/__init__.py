@@ -5,8 +5,6 @@ from app.routers.user.app import user_router
 from app.routers.user.model import User
 from app.routers.request_task.app import request_task_router
 
-from app.routers.request_task.model import Priority, RequestTask
-
 
 app_router = APIRouter()
 
