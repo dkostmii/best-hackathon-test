@@ -21,12 +21,12 @@ request_task_router = APIRouter(
 @request_task_router.get("/")
 @staff_only
 async def get_request_tasks(
-    request: Request,
-    page: int = Query(1, gt=0),
-    limit: int = Query(10, gt=0),
-    is_done: bool = Query(None),
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+        request: Request,
+        page: int = Query(1, gt=0),
+        limit: int = Query(10, gt=0),
+        is_done: bool = Query(None),
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user),
 ):
     request_tasks_result = RequestTaskCRUD.get_request_tasks(db, page, limit, is_done)
 
@@ -43,9 +43,9 @@ async def get_request_tasks(
 @request_task_router.get("/create")
 @auth_only
 async def create_request_task_page(
-    request: Request,
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user)
+        request: Request,
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
 ):
     priorities = PrioritiesCRUD.get_priorities(db)
 
@@ -62,12 +62,12 @@ async def create_request_task_page(
 @request_task_router.post("/create")
 @auth_only
 async def create_request_task(
-    request: Request,
-    priority_id: int = Form(...),
-    name: str = Form(...),
-    description: str = Form(...),
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user)
+        request: Request,
+        priority_id: int = Form(...),
+        name: str = Form(...),
+        description: str = Form(...),
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
 ):
     try:
         data = RequestTaskCreateSchema(priority_id=priority_id, name=name, description=description)
@@ -83,10 +83,10 @@ async def create_request_task(
 @request_task_router.get("/{pk}")
 @auth_only
 async def get_request_task(
-    request: Request,
-    pk: UUID,
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user)
+        request: Request,
+        pk: UUID,
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
 ):
     request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
 
@@ -109,9 +109,9 @@ async def get_request_task(
 @request_task_router.post("/{pk}/done")
 @auth_only
 async def done_request_task(
-    pk: UUID,
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user)
+        pk: UUID,
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
 ):
     request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
 
