@@ -1,7 +1,7 @@
 from typing import Optional
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Form, HTTPException, Response, Request
+from fastapi import APIRouter, Depends, Form, Query, HTTPException, Response, Request
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
 from starlette import status
@@ -26,7 +26,10 @@ async def get_users(db: Session = Depends(get_db), current_user: User = Depends(
 
 
 @user_router.get("/register")
-async def create_user_page(request: Request, current_user: Optional[User] = Depends(get_current_user)):
+async def create_user_page(
+    request: Request,
+    is_staff: bool = Query(False),
+    current_user: Optional[User] = Depends(get_current_user)):
     if current_user:
         return RedirectResponse("/", status_code=303)
 
@@ -34,6 +37,7 @@ async def create_user_page(request: Request, current_user: Optional[User] = Depe
         "auth/register.html",
         {
             "request": request,
+            "form_defaults": {"is_staff": is_staff},
         },
     )
 

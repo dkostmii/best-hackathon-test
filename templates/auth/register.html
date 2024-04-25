@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group mb-3">
                     <div class="form-check" aria-describedby="is_staff_help">
-                        <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff" value="False" />
+                        <input type="checkbox" class="form-check-input" id="is_staff" name="is_staff" value="{{ form_defaults.is_staff }}" />
                         <label for="is_staff" class="form-check-label">Staff</label>
                     </div>
                     <div id="is_staff_help" class="form-text">
@@ -28,6 +28,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Register</button>
+                <p class="text-center mt-4">Already have an account? <a href="/users/login">Login</a></p>
                 {% include 'form_errors.html' %}
             </form>
         </div>
@@ -37,6 +38,7 @@
     const is_staff_input = document.getElementById("is_staff")
 
     if (is_staff_input) {
+        is_staff_input.checked = is_staff_input.value.toLowerCase() === "true"
         is_staff_input.addEventListener("change", (e) => {
             is_staff_input.setAttribute("value", is_staff_input.checked)
         })
