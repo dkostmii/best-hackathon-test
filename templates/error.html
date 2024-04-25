@@ -7,6 +7,9 @@
 {% block content %}
 <div class="text-center h-100 d-flex flex-column justify-content-center">
     <h1>{{ error.title }}</h1>
+    {% if error.status %}
+    <p><strong>{{ error.status }}</strong></p>
+    {% endif %}
     {% if error.description %}
     <p>{{ error.description }}</p>
     {% endif %}
