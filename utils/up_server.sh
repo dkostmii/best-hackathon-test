@@ -25,6 +25,12 @@ done
 # Run database migrations using Alembic
 docker-compose run --rm app sh -c "alembic upgrade head"
 
+if [ "$1" = "loaddata" ]; then
+    # Rebuild Docker images
+    docker-compose run --rm app sh -c "python load_data.py"
+    exit 0
+fi
+
 # Start the application service
 docker-compose up -d app
 docker-compose logs -f
