@@ -27,9 +27,10 @@ async def get_users(db: Session = Depends(get_db), current_user: User = Depends(
 
 @user_router.get("/register")
 async def create_user_page(
-    request: Request,
-    is_staff: bool = Query(False),
-    current_user: Optional[User] = Depends(get_current_user)):
+        request: Request,
+        is_staff: bool = Query(False),
+        current_user: Optional[User] = Depends(get_current_user)
+):
     if current_user:
         return RedirectResponse("/", status_code=303)
 
@@ -116,10 +117,10 @@ async def logout(
 @user_router.get("/{pk}")
 @auth_only
 async def get_user(
-    request: Request,
-    pk: UUID,
-    db: Session = Depends(get_db),
-    current_user: Optional[User] = Depends(get_current_user),
+        request: Request,
+        pk: UUID,
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user),
 ):
     if not current_user.is_staff and pk != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
