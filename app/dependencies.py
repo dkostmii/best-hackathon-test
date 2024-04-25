@@ -1,7 +1,10 @@
+from functools import wraps
+
 from fastapi import Cookie, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
 from sqlalchemy.orm import Session
+from starlette import status
 
 from app.routers.user.crud import SessionCRUD
 from app.routers.user.model import User
@@ -19,6 +22,35 @@ def handle_400_errors(request: Request, errors: ValidationError | HTTPException,
         context={"request": request, "errors": errors},
         status_code=400
     )
+
+
+def auth_only(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        current_user = kwargs.get("current_user")
+
+        if current_user is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You must be logged in")
+
+        return await func(*args, **kwargs)
+
+    return wrapper
+
+
+def staff_only(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        current_user = kwargs.get("current_user")
+
+        if current_user is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You must be logged in")
+
+        if current_user.is_staff is False:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
+
+        return await func(*args, **kwargs)
+
+    return wrapper
 
 
 def get_db():
