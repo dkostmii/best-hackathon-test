@@ -32,12 +32,14 @@ class RequestTaskCRUD:
             is_done: bool | None,
             priority_id: int | None,
             text_search: str | None,
+            creator_id: UUID | None = None,
     ):
         offset = (page - 1) * limit
 
         tasks = db.query(RequestTask)
         tasks = tasks.filter(RequestTask.name.ilike(f"%{text_search}%")) if text_search is not None else tasks
         tasks = tasks.filter_by(is_done=is_done) if is_done is not None else tasks
+        tasks = tasks.filter_by(creator_id=creator_id) if creator_id is not None else tasks
         tasks = (
             tasks.join(Priority).order_by(desc(RequestTask.priority_id == priority_id)).all()
             if priority_id is not None
