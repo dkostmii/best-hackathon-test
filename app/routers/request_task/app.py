@@ -24,10 +24,11 @@ async def get_request_tasks(
     request: Request,
     page: int = Query(1, gt=0),
     limit: int = Query(10, gt=0),
+    is_done: bool = Query(None),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
-    request_tasks_result = RequestTaskCRUD.get_request_tasks(db, page, limit)
+    request_tasks_result = RequestTaskCRUD.get_request_tasks(db, page, limit, is_done)
 
     return templates.TemplateResponse(
         "request_task/list.html",

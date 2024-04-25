@@ -24,10 +24,12 @@ class PaginatedResult(Generic[T]):
 
 class RequestTaskCRUD:
     @staticmethod
-    def get_request_tasks(db: Session, page: int, limit: int):
+    def get_request_tasks(db: Session, page: int, limit: int, is_done: bool | None):
         offset = (page - 1) * limit
 
-        tasks = db.query(RequestTask).all()
+        tasks = db.query(RequestTask)
+        tasks = tasks.filter_by(is_done=is_done).all() if is_done is not None else tasks.all()
+
         task_count = len(tasks)
         page_count = int(math.ceil(task_count / limit))
 
