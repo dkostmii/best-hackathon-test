@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from app.dependencies import get_current_user, get_db, handle_400_errors, templates
+from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, staff_only, templates
 from app.routers.user.crud import UserCRUD, SessionCRUD
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema
@@ -97,6 +97,7 @@ async def login(
 
 
 @user_router.post("/logout")
+@auth_only
 async def logout(
         response: Response,
         current_user: Optional[User] = Depends(get_current_user),
@@ -109,17 +110,24 @@ async def logout(
 
 
 @user_router.get("/{pk}")
+@staff_only
 async def get_user(
     request: Request,
     pk: UUID,
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
-    if current_user is None or not current_user.is_staff:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are unathorized to access this resource")
+    if current_user.id == pk:
+        return templates.TemplateResponse(
+            "user/user.html",
+            {
+                "request": request,
+                "user": current_user,
+                "current_user": current_user
+            },
+        )
 
     user = UserCRUD.get_user_by_id(pk, db)
-
     return templates.TemplateResponse(
         "user/user.html",
         {
