@@ -21,6 +21,6 @@ class RequestTaskSchema(BaseModel):
 
 
 class RequestTaskCreateSchema(BaseModel):
-    priority_id: str
+    priority_id: int
     name: str
     description: str
