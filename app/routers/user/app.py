@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, staff_only, templates
+from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, templates
 from app.routers.user.crud import UserCRUD, SessionCRUD
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema

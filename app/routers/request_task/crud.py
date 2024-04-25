@@ -32,7 +32,13 @@ class RequestTaskCRUD:
 
         items = tasks[offset:offset + limit]
 
-        return PaginatedResult(items=items, current_page=page, current_limit=limit, has_prev=page > 1, has_next=page < page_count)
+        return PaginatedResult(
+            items=items,
+            current_page=page,
+            current_limit=limit,
+            has_prev=page > 1,
+            has_next=page < page_count
+        )
 
     @staticmethod
     def get_request_task_by_id(pk: UUID, db: Session):
