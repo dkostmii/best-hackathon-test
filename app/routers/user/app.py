@@ -11,7 +11,7 @@ from app.dependencies import auth_only, get_current_user, get_db, handle_400_err
 from app.routers.user.crud import UserCRUD, SessionCRUD
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema
-from app.routers.request_task.crud import RequestTaskCRUD
+from app.routers.request_task.crud import RequestTaskCRUD, PrioritiesCRUD
 
 user_router = APIRouter(
     prefix="/users",
@@ -153,6 +153,8 @@ async def get_user(
         creator_id=pk,
     )
 
+    priorities = PrioritiesCRUD.get_priorities(db)
+
     return templates.TemplateResponse(
         "user/user.html",
         {
@@ -163,5 +165,9 @@ async def get_user(
             "filter": {
                 "done_status": done_status if done_status is None else done_status.lower(),
             },
+            "sort": {
+                "priority_id": priority_id,
+            },
+            "priorities": priorities,
         },
     )

@@ -50,6 +50,8 @@ async def get_request_tasks(
         sort_by_ending,
     )
 
+    priorities = PrioritiesCRUD.get_priorities(db)
+
     return templates.TemplateResponse(
         "request_task/list.html",
         {
@@ -58,7 +60,11 @@ async def get_request_tasks(
             "current_user": current_user,
             "filter": {
                 "done_status": done_status if done_status is None else done_status.lower(),
-            }
+            },
+            "sort": {
+                "priority_id": priority_id,
+            },
+            "priorities": priorities,
         }
     )
 
