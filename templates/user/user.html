@@ -5,14 +5,12 @@
 {% endblock %}
 
 {% block content %}
-<div class="container d-flex flex-column w-100 h-100 align-items-center justify-content-center">
-    <div class="w-100 m-auto task-list-container">
-        <h2 class="mb-4">User</h2>
-        <div class="d-flex flex-column">
-            <div class="form-group mb-3">
-                <label class="form-label" for="username">Username</label>
-                <input class="form-control" type="text" id="username" value="{{ user.username }}" readonly />
-            </div>
+<div class="container-sm d-flex flex-column h-100 align-items-stretch gap-5">
+    <div class="d-flex flex-column gap-2">
+        <h2>User</h2>
+        <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <input class="form-control" type="text" id="username" value="{{ user.username }}" readonly />
         </div>
     </div>
     {% if not user.is_staff %}

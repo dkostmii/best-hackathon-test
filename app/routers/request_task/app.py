@@ -21,21 +21,30 @@ request_task_router = APIRouter(
 @request_task_router.get("/")
 @staff_only
 async def get_request_tasks(
-        request: Request,
-        page: int = Query(1, gt=0),
-        limit: int = Query(10, gt=0),
-        done_status: Optional[str] = Query(None),
-        priority_id: Optional[int] = Query(None),
-        text_search: Optional[str] = Query(None),
-        sort_by_newest: Optional[bool] = Query(None),
-        sort_by_oldest: Optional[bool] = Query(None),
-        sort_by_ending: Optional[bool] = Query(None),
-        db: Session = Depends(get_db),
-        current_user: Optional[User] = Depends(get_current_user),
+    request: Request,
+    page: int = Query(1, gt=0),
+    limit: int = Query(10, gt=0),
+    done_status: Optional[str] = Query(None),
+    priority_id: Optional[int] = Query(None),
+    text_search: Optional[str] = Query(None),
+    sort_by_newest: Optional[bool] = Query(None),
+    sort_by_oldest: Optional[bool] = Query(None),
+    sort_by_ending: Optional[bool] = Query(None),
+    reset_filters: Optional[bool] = Query(None),  # Додаємо параметр reset_filters
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user),
 ):
+    if reset_filters:  # Якщо reset_filters=True, то скидаємо всі фільтри
+        done_status = None
+        priority_id = None
+        text_search = None
+        sort_by_newest = None
+        sort_by_oldest = None
+        sort_by_ending = None
+
     if done_status is not None:
         done_status = done_status.lower()
-        if done_status not in ['done', 'todo']:
+        if done_status not in ['done', 'todo', 'all']:
             done_status = None
 
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
@@ -60,6 +69,7 @@ async def get_request_tasks(
             "current_user": current_user,
             "filter": {
                 "done_status": done_status if done_status is None else done_status.lower(),
+                "text_search": text_search,
             },
             "sort": {
                 "priority_id": priority_id,

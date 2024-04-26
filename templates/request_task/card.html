@@ -30,7 +30,7 @@
             <button class="btn btn-primary" type="submit">Complete task</button>
         </div>
     </form>
-    {% else %}
+    {% elif request_task.done_at %}
     <p class="text-secondary">Completed at: {{ request_task.done_at }}</p>
     {% endif %}
 </div>

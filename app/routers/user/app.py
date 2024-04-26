@@ -164,6 +164,7 @@ async def get_user(
             "request_tasks": {"pagination": request_tasks_result},
             "filter": {
                 "done_status": done_status if done_status is None else done_status.lower(),
+                "text_search": text_search,
             },
             "sort": {
                 "priority_id": priority_id,

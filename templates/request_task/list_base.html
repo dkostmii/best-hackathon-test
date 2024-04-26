@@ -1,53 +1,67 @@
-<div class="row w-100">
-    <div class="col-md-8 offset-md-2 task-list-container">
-        <div class="w-100 d-flex justify-content-between align-items-baseline mb-4">
-            <h2 class="text-center mb-4">Task Requests</h2>
-            {% if not current_user.is_staff %}
-            <a href="/request-tasks/create" class="btn btn-primary">Create</a>
-            {% endif %}
+<div class="d-flex flex-column gap-3">
+    <div class="d-flex justify-content-between align-items-baseline">
+        <h3 class="text-center">Task Requests</h3>
+        {% if not current_user.is_staff %}
+        <a href="/request-tasks/create" class="btn btn-primary">Create</a>
+        {% endif %}
+    </div>
+    <div class="card d-flex p-4">
+        <div class="d-flex justify-content-between mb-4">
+            <h4>Options</h4>
+            <a class="btn btn-outline-danger" href="{{ url_prefix }}/"><i class="bi bi-x"></i> Reset</a>
         </div>
-        <div class="w-100 d-flex justify-content-end align-items-baseline mb-4" style="gap: 0.75rem">
-            <label>Display per page</label>
-            <div class="btn-group">
-                {% if request_tasks.pagination.current_limit == 10 %}
-                <a class="btn btn-primary" href="#">10</a>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="input-group">
+                {% if filter.text_search %}
+                <input type="text" class="form-control" id="search-input" placeholder="Search..." value="{{ filter.text_search }}" />
                 {% else %}
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=10">10</a>
+                <input type="text" class="form-control" id="search-input" placeholder="Search..." />
                 {% endif %}
-
-                {% if request_tasks.pagination.current_limit == 20 %}
-                <a class="btn btn-primary" href="#">20</a>
-                {% else %}
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=20">20</a>
-                {% endif %}
-
-                {% if request_tasks.pagination.current_limit == 50 %}
-                <a class="btn btn-primary" href="#">50</a>
-                {% else %}
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=50">50</a>
-                {% endif %}
+                <button type="button" class="btn btn-primary" id="search-btn"><i class="bi bi-search"></i> Search</button>
             </div>
         </div>
-        <div class="w-100 d-flex justify-content-end align-items-baseline mb-4" style="gap: 0.75rem">
-            <label>Filter</label>
-            <div class="btn-group">
-                {% if filter.done_status == "todo" %}
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
-                <a class="btn btn-primary" href="#">ToDo</a>
-                {% elif filter.done_status == "done" %}
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
-                <a class="btn btn-primary" href="#">Done</a>
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
-                {% else %}
-                <a class="btn btn-primary" href="#">All</a>
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
-                <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
-                {% endif %}
+        <div class="d-flex justify-content-between gap-3 flex-wrap">
+            <div class="d-flex flex-column justify-content-end align-items-baseline mb-4 gap-3">
+                <label>Display per page</label>
+                <div class="btn-group">
+                    {% if request_tasks.pagination.current_limit == 10 %}
+                    <a class="btn btn-primary" href="#">10</a>
+                    {% else %}
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=10">10</a>
+                    {% endif %}
+
+                    {% if request_tasks.pagination.current_limit == 20 %}
+                    <a class="btn btn-primary" href="#">20</a>
+                    {% else %}
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=20">20</a>
+                    {% endif %}
+
+                    {% if request_tasks.pagination.current_limit == 50 %}
+                    <a class="btn btn-primary" href="#">50</a>
+                    {% else %}
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=50">50</a>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        <div class="w-100 d-flex justify-content-end align-items-baseline mb-4" style="gap: 0.75rem">
-            <div class="form-group">
+            <div class="d-flex flex-column justify-content-end align-items-baseline mb-4 gap-3">
+                <label>Filter</label>
+                <div class="btn-group">
+                    {% if filter.done_status == "todo" %}
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
+                    <a class="btn btn-primary" href="#">ToDo</a>
+                    {% elif filter.done_status == "done" %}
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
+                    <a class="btn btn-primary" href="#">Done</a>
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
+                    {% else %}
+                    <a class="btn btn-primary" href="#">All</a>
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
+                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="form-group d-flex flex-column mb-4 gap-3">
                 <label for="sort-priority">Sort</label>
                 <select class="form-select" id="sort-priority">
                     <option value="">Default</option>
@@ -61,31 +75,31 @@
                 </select>
             </div>
         </div>
-        {% if request_tasks is defined and request_tasks|length > 0 %}
-            <div class="d-flex flex-column" style="gap: 0.75rem">
-            {% for request_task in request_tasks.pagination.items %}
-            {% include 'request_task/card.html' %}
-            {% endfor %}
-            </div>
-        {% else %}
-            <div>
-                <h2 class="display-2">Empty!</h2>
-                <p>{{ no_tasks_caption }}</p>
-            </div>
-        {% endif %}
-        {% if request_tasks.pagination.has_next or request_tasks.pagination.has_prev %}
-        <div class="d-flex w-100 justify-content-center mt-4">
-            <div class="btn-group">
-                {% if request_tasks.pagination.has_prev %}
-                <a class="btn btn-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&page={{ request_tasks.pagination.current_page - 1 }}">Prev</a>
-                {% endif %}
-                {% if request_tasks.pagination.has_next %}
-                <a class="btn btn-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&page={{ request_tasks.pagination.current_page + 1 }}">Next</a>
-                {% endif %}
-            </div>
-        </div>
-        {% endif %}
     </div>
+    {% if request_tasks is defined and request_tasks|length > 0 %}
+        <div class="d-flex flex-column gap-3">
+        {% for request_task in request_tasks.pagination.items %}
+        {% include 'request_task/card.html' %}
+        {% endfor %}
+        </div>
+    {% else %}
+        <div>
+            <h2 class="display-2">Empty!</h2>
+            <p>{{ no_tasks_caption }}</p>
+        </div>
+    {% endif %}
+    {% if request_tasks.pagination.has_next or request_tasks.pagination.has_prev %}
+    <div class="d-flex w-100 justify-content-center mt-4">
+        <div class="btn-group">
+            {% if request_tasks.pagination.has_prev %}
+            <a class="btn btn-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&page={{ request_tasks.pagination.current_page - 1 }}">Prev</a>
+            {% endif %}
+            {% if request_tasks.pagination.has_next %}
+            <a class="btn btn-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&page={{ request_tasks.pagination.current_page + 1 }}">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 <script>
     function getQueryParamString(query_params_obj) {
@@ -103,10 +117,15 @@
     }
 
     const sort_priority_select = document.getElementById("sort-priority")
+    const search_input = document.getElementById("search-input")
+    const search_btn = document.getElementById("search-btn")
     let current_priority = null
     const current_limit = "{{ request_tasks.pagination.current_limit }}"
     const done_status = "{{ filter.done_status }}"
     const base_url = `${window.location.origin}{{ url_prefix }}`
+    const query_params = {
+        limit: current_limit,
+    }
 
     if (sort_priority_select) {
         sort_priority_select.addEventListener("change", (e) => {
@@ -114,10 +133,6 @@
                 current_priority = sort_priority_select.value
             } else {
                 current_priority = null
-            }
-
-            const query_params = {
-                limit: current_limit,
             }
 
             if (done_status !== "None") {
@@ -130,6 +145,39 @@
 
             const query_param_string = getQueryParamString(query_params)
             window.location.href = `${base_url}${query_param_string}`
+        })
+    }
+
+    if (search_input && search_btn) {
+        search_btn.addEventListener("click", (e) => {
+            if (sort_priority_select.value) {
+                current_priority = sort_priority_select.value
+            } else {
+                current_priority = null
+            }
+
+            if (done_status !== "None") {
+                query_params.done_status = done_status
+            }
+
+            if (current_priority !== null) {
+                query_params.priority_id = current_priority
+            }
+
+            const search_term = search_input.value
+
+            if (search_term) {
+                query_params.text_search = search_term
+            }
+
+            const query_param_string = getQueryParamString(query_params)
+            window.location.href = `${base_url}${query_param_string}`
+        })
+
+        search_input.addEventListener("keypress", (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                search_btn.click()
+            }
         })
     }
 </script>
