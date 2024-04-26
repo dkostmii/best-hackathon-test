@@ -24,6 +24,7 @@ class RequestTask(Base):
     created_at = Column(DateTime, default=text("CURRENT_TIMESTAMP"))
     done_at = Column(DateTime, nullable=True)
     is_done = Column(Boolean, default=False)
+    ending_at = Column(DateTime, nullable=True)
 
     creator = relationship("User")
     priority = relationship("Priority")

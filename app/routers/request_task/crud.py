@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from uuid import UUID
 import math
 
-from sqlalchemy import desc
+from sqlalchemy import asc, desc
 from sqlalchemy.orm import Session
 
 from app.routers.request_task.model import Priority, RequestTask
@@ -32,6 +32,9 @@ class RequestTaskCRUD:
             is_done: bool | None,
             priority_id: int | None,
             text_search: str | None,
+            sort_by_newest: bool | None,
+            sort_by_oldest: bool | None,
+            sort_by_ending: bool | None,
             creator_id: UUID | None = None,
     ):
         offset = (page - 1) * limit
@@ -40,6 +43,9 @@ class RequestTaskCRUD:
         tasks = tasks.filter(RequestTask.name.ilike(f"%{text_search}%")) if text_search is not None else tasks
         tasks = tasks.filter_by(is_done=is_done) if is_done is not None else tasks
         tasks = tasks.filter_by(creator_id=creator_id) if creator_id is not None else tasks
+        tasks = tasks.order_by(desc(RequestTask.created_at)) if sort_by_newest else tasks
+        tasks = tasks.order_by(asc(RequestTask.created_at)) if sort_by_oldest else tasks
+        tasks = tasks.order_by(desc(RequestTask.ending_at)) if sort_by_ending else tasks
         tasks = (
             tasks.join(Priority).order_by(desc(RequestTask.priority_id == priority_id)).all()
             if priority_id is not None

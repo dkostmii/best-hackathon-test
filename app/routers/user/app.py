@@ -125,6 +125,9 @@ async def get_user(
         is_done: Optional[bool] = Query(None),
         priority_id: Optional[int] = Query(None),
         text_search: Optional[str] = Query(None),
+        sort_by_newest: Optional[bool] = Query(None),
+        sort_by_oldest: Optional[bool] = Query(None),
+        sort_by_ending: Optional[bool] = Query(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user),
 ):
@@ -133,7 +136,16 @@ async def get_user(
 
     user = UserCRUD.get_user_by_id(pk, db)
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
-        db, page, limit, is_done, priority_id, text_search, creator_id=pk
+        db,
+        page,
+        limit,
+        is_done,
+        priority_id,
+        text_search,
+        sort_by_newest,
+        sort_by_oldest,
+        sort_by_ending,
+        creator_id=pk,
     )
 
     return templates.TemplateResponse(
