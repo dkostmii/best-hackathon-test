@@ -1,8 +1,12 @@
 <div class="card d-flex flex-column gap-4 p-4">
-    <div class="form-group">
-        <label for="name_{{ request_task.id }}">Title</label>
-        <input type="text" class="form-control" id="name_{{ request_task.id }}" value="{{ request_task.name }}" readonly />
-    </div>
+    <h4 class="d-flex justify-content-between align-items-baseline">
+<span>{{ request_task.name }}</span>
+{% if request_task.is_done %}
+<span class="bagde rounded p-1 text-bg-success text-end fs-5">Done <i class="bi bi-check"></i></span>
+{% else %}
+<span class="bagde p-1 text-primary text-end fs-5">To do <i class="bi bi-list-task"></i></span>
+{% endif %}
+    </h4>
     {% if full_info %}
     <div class="form-group">
         <label for="description_{{ request_task.id }}">Description</label>
@@ -19,5 +23,14 @@
     <div class="w-100 d-flex justify-content-end mb-4">
         <a href="/request-tasks/{{ request_task.id }}" class="btn btn-primary">View task</a>
     </div>
+    {% endif %}
+    {% if current_user.is_staff and not request_task.is_done %}
+    <form action="/request-tasks/{{ request_task.id }}/done" method="POST" enctype="application/x-www-form-urlencoded">
+        <div class="d-flex w-100 justify-content-end">
+            <button class="btn btn-primary" type="submit">Complete task</button>
+        </div>
+    </form>
+    {% else %}
+    <p class="text-secondary">Completed at: {{ request_task.done_at }}</p>
     {% endif %}
 </div>
