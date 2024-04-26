@@ -109,7 +109,7 @@ async def get_request_task(
 
 
 @request_task_router.post("/{pk}/done")
-@auth_only
+@staff_only
 async def done_request_task(
         pk: UUID,
         db: Session = Depends(get_db),
@@ -119,9 +119,6 @@ async def done_request_task(
 
     if request_task is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Request task with id {pk} does not exist")
-
-    if request_task.creator.id != current_user.id:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
     request_task = RequestTaskCRUD.done_request_task(request_task, db)
 
