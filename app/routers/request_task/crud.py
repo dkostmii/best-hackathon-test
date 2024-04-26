@@ -29,7 +29,7 @@ class RequestTaskCRUD:
             db: Session,
             page: int,
             limit: int,
-            is_done: bool | None,
+            done_status: str | None,
             priority_id: int | None,
             text_search: str | None,
             sort_by_newest: bool | None,
@@ -39,9 +39,16 @@ class RequestTaskCRUD:
     ):
         offset = (page - 1) * limit
 
+        is_done = None
+
+        if done_status == 'done':
+            is_done = True
+        elif done_status == 'todo':
+            is_done = False
+
         tasks = db.query(RequestTask)
         tasks = tasks.filter(RequestTask.name.ilike(f"%{text_search}%")) if text_search is not None else tasks
-        tasks = tasks.filter_by(is_done=is_done) if is_done is not None else tasks
+        tasks = tasks.filter(RequestTask.is_done.is_(is_done)) if is_done is not None else tasks
         tasks = tasks.filter_by(creator_id=creator_id) if creator_id is not None else tasks
         tasks = tasks.order_by(desc(RequestTask.created_at)) if sort_by_newest else tasks
         tasks = tasks.order_by(asc(RequestTask.created_at)) if sort_by_oldest else tasks

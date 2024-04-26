@@ -122,7 +122,7 @@ async def get_user(
         pk: UUID,
         page: int = Query(1, gt=0),
         limit: int = Query(10, gt=0),
-        is_done: Optional[bool] = Query(None),
+        done_status: Optional[str] = Query(None),
         priority_id: Optional[int] = Query(None),
         text_search: Optional[str] = Query(None),
         sort_by_newest: Optional[bool] = Query(None),
@@ -134,12 +134,17 @@ async def get_user(
     if not current_user.is_staff and pk != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
+    if done_status is not None:
+        done_status = done_status.lower()
+        if done_status not in ['done', 'todo']:
+            done_status = None
+
     user = UserCRUD.get_user_by_id(pk, db)
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
         db,
         page,
         limit,
-        is_done,
+        done_status,
         priority_id,
         text_search,
         sort_by_newest,
@@ -155,5 +160,8 @@ async def get_user(
             "user": user,
             "current_user": current_user,
             "request_tasks": {"pagination": request_tasks_result},
+            "filter": {
+                "done_status": done_status if done_status is None else done_status.lower(),
+            },
         },
     )
