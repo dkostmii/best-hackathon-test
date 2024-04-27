@@ -12,11 +12,14 @@
             <div class="d-flex flex-column align-items-stretch gap-3">
                 <div class="form-group">
                     <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username" required>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="For example, bondarchuk37" required>
                 </div>
                 <div class="form-group">
                     <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password here" aria-describedby="password-help" required>
+                    <div class="form-text" id="password-help">
+                        Password should contain at least 8 characters.
+                    </div>
                 </div>
                 <div class="form-group">
                     <div class="form-check" aria-describedby="is_staff_help">
