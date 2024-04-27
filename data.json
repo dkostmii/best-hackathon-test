@@ -17,28 +17,6 @@
          "is_deleted":false
       }
    ],
-   "Priority":[
-      {
-         "id":1,
-         "name":"lowest"
-      },
-      {
-         "id":2,
-         "name":"low"
-      },
-      {
-         "id":3,
-         "name":"medium"
-      },
-      {
-         "id":4,
-         "name":"high"
-      },
-      {
-         "id":5,
-         "name":"highest"
-      }
-   ],
    "RequestTask":[
       {
          "id":"ffe04e2a-9e4c-4000-99c3-f94c9d4358cf",
