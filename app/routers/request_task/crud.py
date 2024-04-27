@@ -83,6 +83,8 @@ class RequestTaskCRUD:
             description=data.description,
             creator_id=creator.id,
             priority_id=data.priority_id,
+            ending_at=data.ending_at,
+            is_done=False,
         )
         db.add(request_task)
         db.commit()

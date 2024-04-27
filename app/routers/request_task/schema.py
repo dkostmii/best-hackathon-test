@@ -24,3 +24,4 @@ class RequestTaskCreateSchema(BaseModel):
     priority_id: int
     name: str
     description: str
+    ending_at: datetime | None
