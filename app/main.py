@@ -3,9 +3,13 @@ from fastapi import FastAPI, HTTPException, Request
 from app.routers import app_router, templates
 
 
-base_app = FastAPI()
+base_app = FastAPI(
+    title="Help Request Portal",
+    description="This Portal facilitates the process of providing assistance to people in need, making it easier to "
+                "connect those who provide help.",
+    version="1.0.0",
+)
 base_app.include_router(app_router)
-
 
 @base_app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
