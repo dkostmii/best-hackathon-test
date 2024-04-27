@@ -6,7 +6,6 @@ services:
       sh -c " 
       python3 wait_for_db.py &&
       alembic upgrade head &&
-      python3 load_data.py &&
       python3 -m uvicorn app.main:base_app --host 0.0.0.0 --port 8000 --reload"
     environment:
       MAPBOX_ACCESS_TOKEN: "pk.eyJ1Ijoia2l0bmVraXQiLCJhIjoiY2x2aWVqazM4MWd5ZzJqcDVldTgxeGs3YyJ9.KYUkM4Imga0-5U0jukxVFA"
