@@ -31,18 +31,9 @@ async def get_request_tasks(
     sort_by_newest: Optional[bool] = Query(None),
     sort_by_oldest: Optional[bool] = Query(None),
     sort_by_ending: Optional[bool] = Query(None),
-    reset_filters: Optional[bool] = Query(None),  # Додаємо параметр reset_filters
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
-    if reset_filters:  # Якщо reset_filters=True, то скидаємо всі фільтри
-        done_status = None
-        priority_id = None
-        text_search = None
-        sort_by_newest = None
-        sort_by_oldest = None
-        sort_by_ending = None
-
     if done_status is not None:
         done_status = done_status.lower()
         if done_status not in ['done', 'todo', 'all']:
