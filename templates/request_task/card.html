@@ -1,7 +1,13 @@
 <div class="card d-flex flex-column gap-4 p-4">
     <h4 class="d-flex justify-content-between align-items-baseline mb-0">
 <span>{{ request_task.name }}</span>
-{% if request_task.is_done %}
+{% if request_task.ending_at and request_task.ending_at < current_datetime %}
+  {% if request_task.is_done %}
+  <span class="bagde rounded p-1 text-danger border border-danger text-end fs-5"><i class="bi bi-x"></i> Completed past due</span>
+  {% else %}
+  <span class="bagde rounded p-1 text-bg-danger text-end fs-5"><i class="bi bi-x"></i> Overdue</span>
+  {% endif %}
+{% elif request_task.is_done %}
 <span class="bagde rounded p-1 text-bg-success text-end fs-5"><i class="bi bi-check"></i> Done</span>
 {% else %}
 <span class="bagde p-1 text-primary text-end fs-5"><i class="bi bi-list-task"></i> To do</span>
@@ -21,11 +27,19 @@
     {% if request_task.created_at %}
     <p class="text-secondary mb-0">Created at: {{ request_task.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
     {% endif %}
+    {% if request_task.ending_at %}
+    {% set deadline_caption_style = "" if request_task.ending_at > current_datetime else "text-danger text-decoration-line-through" %}
+    <p class="text-secondary mb-0 {{ deadline_caption_style }}">Deadline: {{ request_task.ending_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+    {% endif %}
     <div class="w-100 d-flex justify-content-end align-items-baseline gap-4 flex-wrap">
         {% if current_user.is_staff and not request_task.is_done %}
         <form action="/request-tasks/{{ request_task.id }}/done" method="POST" enctype="application/x-www-form-urlencoded">
             <div class="d-flex w-100 justify-content-end">
+                {% if request_task.ending_at and request_task.ending_at < current_datetime %}
+                <button class="btn btn-danger" type="submit"><i class="bi bi-check"></i> Complete past due</button>
+                {% else %}
                 <button class="btn btn-success" type="submit"><i class="bi bi-check"></i> Complete task</button>
+                {% endif %}
             </div>
         </form>
         {% elif request_task.done_at %}
