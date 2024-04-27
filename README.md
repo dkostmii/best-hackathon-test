@@ -19,7 +19,7 @@ Users data:
     123123123
     ```
 
-- User
+- NeedHelp
   - username:
 
     ```text
@@ -107,19 +107,19 @@ flake8
 1. To build and run the app
 
     ```bash
-    ./utils/up_services.sh build
+    ./utils/up_server.sh build
     ```
 
 2. Load data to the database:
 
     ```bash
-    ./utils/up_services.sh load_data
+    ./utils/up_server.sh load_data
     ```
 
 3. To run the app:
 
     ```bash
-    ./utils/up_services.sh
+    ./utils/up_server.sh
     ```
 
 ## Database
@@ -133,10 +133,10 @@ thanks to `from database import Base` statement.
     ./utils/create_migration.sh migration_message
     ```
 
-Migration will up automatically after running the app.
+    Migration will up automatically after running the app.
 
-To downgrade the migration, run:
+    To downgrade the migration, run:
 
-```bash
-./utils/downgrade_migration.sh
-```
+    ```bash
+    ./utils/downgrade_migration.sh
+    ```
