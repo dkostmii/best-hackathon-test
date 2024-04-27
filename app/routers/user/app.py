@@ -1,5 +1,6 @@
 from typing import Optional
 from uuid import UUID
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, Form, Query, HTTPException, Response, Request
 from pydantic import ValidationError
@@ -170,5 +171,6 @@ async def get_user(
                 "priority_id": priority_id,
             },
             "priorities": priorities,
+            "current_datetime": datetime.now(),
         },
     )

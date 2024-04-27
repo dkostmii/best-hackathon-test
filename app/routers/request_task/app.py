@@ -1,5 +1,6 @@
 from typing import Optional
 from uuid import UUID
+from datetime import datetime
 
 from fastapi import APIRouter, Depends, Form, HTTPException, Query, Request
 from pydantic import ValidationError
@@ -75,6 +76,7 @@ async def get_request_tasks(
                 "priority_id": priority_id,
             },
             "priorities": priorities,
+            "current_datetime": datetime.now(),
         }
     )
 
@@ -105,15 +107,20 @@ async def create_request_task(
         priority_id: int = Form(...),
         name: str = Form(...),
         description: str = Form(...),
+        ending_at: datetime | None = Form(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
     try:
-        data = RequestTaskCreateSchema(priority_id=priority_id, name=name, description=description)
+        if ending_at and ending_at < datetime.now():
+            raise HTTPException(status_code=400, detail="Deadline cannot be in the past.")
+
+        data = RequestTaskCreateSchema(priority_id=priority_id, name=name, description=description, ending_at=ending_at)
         request_task = RequestTaskCRUD.create_request_task(data, current_user, db)
 
     except (ValidationError, HTTPException) as e:
-        return handle_400_errors(request, e, "request_task/create.html")
+        priorities = PrioritiesCRUD.get_priorities(db)
+        return handle_400_errors(request, e, "request_task/create.html", context={"priorities": priorities})
 
     else:
         return RedirectResponse(f"/request-tasks/{request_task.id}", status_code=303)
@@ -141,6 +148,7 @@ async def get_request_task(
             "request": request,
             "request_task": request_task,
             "current_user": current_user,
+            "current_datetime": datetime.now(),
         },
     )
 
