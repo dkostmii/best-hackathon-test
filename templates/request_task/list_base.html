@@ -62,9 +62,9 @@
                 </div>
             </div>
             <div class="form-group d-flex flex-column mb-4 gap-3">
-                <label for="sort-priority">Sort</label>
+                <label for="sort-priority">Keep priority first</label>
                 <select class="form-select" id="sort-priority">
-                    <option value="">Default</option>
+                    <option value="">Any priority</option>
                     {% for priority in priorities %}
                     {% if priority.id == sort.priority_id %}
                     <option value="{{ priority.id }}" selected>{{ priority.name }}</option>
@@ -74,9 +74,18 @@
                     {% endfor %}
                 </select>
             </div>
+            <div class="form-group d-flex flex-column mb-4 gap-3">
+                <label for="sort-dates">Sort by</label>
+                <select class="form-select" id="sort-dates">
+                    <option value="">Do not sort</option>
+                    <option value="newest" {{ 'selected' if sort.sort_by == 'newest' else '' }}>Newest</option>
+                    <option value="oldest" {{ 'selected' if sort.sort_by == 'oldest' else '' }}>Oldest</option>
+                    <option value="ending" {{ 'selected' if sort.sort_by == 'ending' else '' }}>Deadline</option>
+                </select>
+            </div>
         </div>
     </div>
-    {% if request_tasks is defined and request_tasks|length > 0 %}
+    {% if request_tasks.pagination.items is defined and request_tasks.pagination.items|length > 0 %}
         <div class="d-flex flex-column gap-3">
         {% for request_task in request_tasks.pagination.items %}
         {% include 'request_task/card.html' %}
@@ -117,9 +126,11 @@
     }
 
     const sort_priority_select = document.getElementById("sort-priority")
+    const sort_dates_select = document.getElementById("sort-dates")
     const search_input = document.getElementById("search-input")
     const search_btn = document.getElementById("search-btn")
     let current_priority = null
+    let current_sort_dates_value = null
     const current_limit = "{{ request_tasks.pagination.current_limit }}"
     const done_status = "{{ filter.done_status }}"
     const base_url = `${window.location.origin}{{ url_prefix }}`
@@ -127,52 +138,37 @@
         limit: current_limit,
     }
 
+    function updatePage() {
+        if (done_status !== "None") {
+            query_params.done_status = done_status
+        }
+
+        if (sort_priority_select.value) {
+            query_params.priority_id = sort_priority_select.value
+        }
+
+        if (sort_dates_select.value) {
+            query_params.sort_by = sort_dates_select.value
+        }
+
+        if (search_input.value) {
+            query_params.text_search = search_input.value
+        }
+
+        const query_param_string = getQueryParamString(query_params)
+        window.location.href = `${base_url}${query_param_string}`
+    }
+
     if (sort_priority_select) {
-        sort_priority_select.addEventListener("change", (e) => {
-            if (sort_priority_select.value) {
-                current_priority = sort_priority_select.value
-            } else {
-                current_priority = null
-            }
+        sort_priority_select.addEventListener("change", updatePage)
+    }
 
-            if (done_status !== "None") {
-                query_params.done_status = done_status
-            }
-
-            if (current_priority !== null) {
-                query_params.priority_id = current_priority
-            }
-
-            const query_param_string = getQueryParamString(query_params)
-            window.location.href = `${base_url}${query_param_string}`
-        })
+    if (sort_dates_select) {
+        sort_dates_select.addEventListener("change", updatePage)
     }
 
     if (search_input && search_btn) {
-        search_btn.addEventListener("click", (e) => {
-            if (sort_priority_select.value) {
-                current_priority = sort_priority_select.value
-            } else {
-                current_priority = null
-            }
-
-            if (done_status !== "None") {
-                query_params.done_status = done_status
-            }
-
-            if (current_priority !== null) {
-                query_params.priority_id = current_priority
-            }
-
-            const search_term = search_input.value
-
-            if (search_term) {
-                query_params.text_search = search_term
-            }
-
-            const query_param_string = getQueryParamString(query_params)
-            window.location.href = `${base_url}${query_param_string}`
-        })
+        search_btn.addEventListener("click", updatePage)
 
         search_input.addEventListener("keypress", (e) => {
             if (e.key === 'Enter' || e.keyCode === 13) {
