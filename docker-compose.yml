@@ -6,7 +6,7 @@ services:
       sh -c "alembic upgrade head &&
             python3 -m uvicorn app.main:base_app --host 0.0.0.0 --port 8000 --reload"
     environment:
-      MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
+      MAPBOX_ACCESS_TOKEN: "pk.eyJ1Ijoia2l0bmVraXQiLCJhIjoiY2x2aWVqazM4MWd5ZzJqcDVldTgxeGs3YyJ9.KYUkM4Imga0-5U0jukxVFA"
     volumes:
       - ./:/app
     ports:
@@ -22,6 +22,8 @@ services:
       POSTGRES_USER: "postgres"
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "postgres_local"
+    volumes:
+      - ./data:/var/lib/postgresql/data
     expose:
       - "5432"
     ports:
