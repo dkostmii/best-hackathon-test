@@ -9,7 +9,6 @@ from database import SessionLocal
 from app.routers.user.model import User
 from app.routers.request_task.model import RequestTask, Priority
 
-
 MODELS = {
     "User": User,
     "RequestTask": RequestTask,
@@ -30,11 +29,18 @@ def deserialize_uuid(uuid_str):
 def load_data_from_json(file_path):
     with open(file_path, 'r') as file:
         data = json.load(file)
-    with SessionLocal() as session:
 
+    with SessionLocal() as session:
         for model_name, serialized_instances in data.items():
             print(f"Loading {model_name}")
             Model = MODELS[model_name]
+
+            # Check if the table is empty
+            existing_records = session.query(Model).limit(1).all()
+            if existing_records:
+                print(f"Data already added for {model_name}. Skipping.")
+                continue
+
             mapped_rows = []
             for serialized_instance in serialized_instances:
                 deserialized_instance = {}
@@ -47,6 +53,13 @@ def load_data_from_json(file_path):
                     else:
                         deserialized_instance[key] = value
                 mapped_rows.append(deserialized_instance)
-            session.execute(insert(Model).values(mapped_rows))
 
-        session.commit()
+            if mapped_rows:
+                session.execute(insert(Model).values(mapped_rows))
+                session.commit()
+                print(f"Successfully loaded {len(mapped_rows)} {model_name} records.")
+            else:
+                print(f"No data found for {model_name}. Skipping.")
+
+
+load_data_from_json("data.json")
