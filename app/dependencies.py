@@ -1,3 +1,4 @@
+from typing import Any
 from functools import wraps
 
 from fastapi import Cookie, Depends, HTTPException, Request
@@ -14,12 +15,18 @@ from database import SessionLocal
 templates = Jinja2Templates(directory="templates")
 
 
-def handle_400_errors(request: Request, errors: ValidationError | HTTPException, page: str):
+def handle_400_errors(request: Request, errors: ValidationError | HTTPException, page: str, context: dict[str, Any] | None = None):
     errors = errors.errors() if isinstance(errors, ValidationError) else [errors.detail]
+
+    default_context = {"request": request, "errors": errors}
+    if context is None:
+        context = default_context
+    else:
+        context = {**default_context, **context}
 
     return templates.TemplateResponse(
         name=page,
-        context={"request": request, "errors": errors},
+        context=context,
         status_code=400
     )
 
