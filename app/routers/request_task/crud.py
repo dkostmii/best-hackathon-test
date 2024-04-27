@@ -32,9 +32,7 @@ class RequestTaskCRUD:
             done_status: str | None,
             priority_id: int | None,
             text_search: str | None,
-            sort_by_newest: bool | None,
-            sort_by_oldest: bool | None,
-            sort_by_ending: bool | None,
+            sort_by: str | None,
             creator_id: UUID | None = None,
     ):
         offset = (page - 1) * limit
@@ -50,9 +48,9 @@ class RequestTaskCRUD:
         tasks = tasks.filter(RequestTask.name.ilike(f"%{text_search}%")) if text_search is not None else tasks
         tasks = tasks.filter(RequestTask.is_done.is_(is_done)) if is_done is not None else tasks
         tasks = tasks.filter_by(creator_id=creator_id) if creator_id is not None else tasks
-        tasks = tasks.order_by(desc(RequestTask.created_at)) if sort_by_newest else tasks
-        tasks = tasks.order_by(asc(RequestTask.created_at)) if sort_by_oldest else tasks
-        tasks = tasks.order_by(desc(RequestTask.ending_at)) if sort_by_ending else tasks
+        tasks = tasks.order_by(desc(RequestTask.created_at)) if sort_by == 'newest' else tasks
+        tasks = tasks.order_by(asc(RequestTask.created_at)) if sort_by == 'oldest' else tasks
+        tasks = tasks.order_by(asc(RequestTask.ending_at)) if sort_by == 'ending' else tasks
         tasks = (
             tasks.join(Priority).order_by(desc(RequestTask.priority_id == priority_id)).all()
             if priority_id is not None

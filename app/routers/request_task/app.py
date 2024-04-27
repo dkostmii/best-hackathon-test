@@ -28,9 +28,7 @@ async def get_request_tasks(
     done_status: Optional[str] = Query(None),
     priority_id: Optional[int] = Query(None),
     text_search: Optional[str] = Query(None),
-    sort_by_newest: Optional[bool] = Query(None),
-    sort_by_oldest: Optional[bool] = Query(None),
-    sort_by_ending: Optional[bool] = Query(None),
+    sort_by: Optional[str] = Query(None),
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
@@ -39,6 +37,11 @@ async def get_request_tasks(
         if done_status not in ['done', 'todo', 'all']:
             done_status = None
 
+    if sort_by is not None:
+        sort_by = sort_by.lower()
+        if sort_by not in ['newest', 'oldest', 'ending']:
+            sort_by = None
+
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
         db,
         page,
@@ -46,9 +49,7 @@ async def get_request_tasks(
         done_status,
         priority_id,
         text_search,
-        sort_by_newest,
-        sort_by_oldest,
-        sort_by_ending,
+        sort_by,
     )
 
     priorities = PrioritiesCRUD.get_priorities(db)
@@ -65,6 +66,7 @@ async def get_request_tasks(
             },
             "sort": {
                 "priority_id": priority_id,
+                "sort_by": sort_by,
             },
             "priorities": priorities,
             "current_datetime": datetime.now(),

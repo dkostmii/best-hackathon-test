@@ -126,9 +126,7 @@ async def get_user(
         done_status: Optional[str] = Query(None),
         priority_id: Optional[int] = Query(None),
         text_search: Optional[str] = Query(None),
-        sort_by_newest: Optional[bool] = Query(None),
-        sort_by_oldest: Optional[bool] = Query(None),
-        sort_by_ending: Optional[bool] = Query(None),
+        sort_by: Optional[str] = Query(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user),
 ):
@@ -140,6 +138,11 @@ async def get_user(
         if done_status not in ['done', 'todo']:
             done_status = None
 
+    if sort_by is not None:
+        sort_by = sort_by.lower()
+        if sort_by not in ['newest', 'oldest', 'ending']:
+            sort_by = None
+
     user = UserCRUD.get_user_by_id(pk, db)
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
         db,
@@ -148,9 +151,7 @@ async def get_user(
         done_status,
         priority_id,
         text_search,
-        sort_by_newest,
-        sort_by_oldest,
-        sort_by_ending,
+        sort_by,
         creator_id=pk,
     )
 
@@ -169,6 +170,7 @@ async def get_user(
             },
             "sort": {
                 "priority_id": priority_id,
+                "sort_by": sort_by,
             },
             "priorities": priorities,
             "current_datetime": datetime.now(),
