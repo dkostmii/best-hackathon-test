@@ -82,6 +82,7 @@ class RequestTaskCRUD:
             creator_id=creator.id,
             priority_id=data.priority_id,
             ending_at=data.ending_at,
+            location_lng_lat=data.location_lng_lat,
             is_done=False,
         )
         db.add(request_task)

@@ -26,6 +26,7 @@ class RequestTask(Base):
     done_at = Column(DateTime, nullable=True)
     is_done = Column(Boolean, server_default=expression.false(), nullable=False)
     ending_at = Column(DateTime, nullable=True)
+    location_lng_lat = Column(String(60), nullable=True)
 
     creator = relationship("User")
     priority = relationship("Priority")

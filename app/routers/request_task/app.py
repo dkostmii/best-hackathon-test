@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from starlette.responses import RedirectResponse
 import starlette.status as status
 
+from settings import MAPBOX
 from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, staff_only, templates
 from app.routers.request_task.crud import PrioritiesCRUD, RequestTaskCRUD
 from app.routers.request_task.schema import RequestTaskCreateSchema
@@ -70,6 +71,7 @@ async def get_request_tasks(
             },
             "priorities": priorities,
             "current_datetime": datetime.now(),
+            "mapbox": MAPBOX,
         }
     )
 
@@ -89,6 +91,7 @@ async def create_request_task_page(
             "request": request,
             "priorities": priorities,
             "current_user": current_user,
+            "mapbox": MAPBOX,
         },
     )
 
@@ -100,7 +103,8 @@ async def create_request_task(
         priority_id: int = Form(...),
         name: str = Form(...),
         description: str = Form(...),
-        ending_at: datetime | None = Form(None),
+        ending_at: Optional[datetime] = Form(None),
+        location_lng_lat: Optional[str] = Form(None),
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
@@ -108,12 +112,34 @@ async def create_request_task(
         if ending_at and ending_at < datetime.now():
             raise HTTPException(status_code=400, detail="Deadline cannot be in the past.")
 
-        data = RequestTaskCreateSchema(priority_id=priority_id, name=name, description=description, ending_at=ending_at)
+        data = RequestTaskCreateSchema(
+            priority_id=priority_id,
+            name=name,
+            description=description,
+            ending_at=ending_at,
+            location_lng_lat=location_lng_lat
+        )
+
         request_task = RequestTaskCRUD.create_request_task(data, current_user, db)
 
     except (ValidationError, HTTPException) as e:
         priorities = PrioritiesCRUD.get_priorities(db)
-        return handle_400_errors(request, e, "request_task/create.html", context={"priorities": priorities})
+        return handle_400_errors(
+            request,
+            e,
+            "request_task/create.html",
+            context={
+                "priorities": priorities,
+                "mapbox": MAPBOX,
+                "form": {
+                    "name": name,
+                    "description": description,
+                    "ending_at": ending_at,
+                    "location_lng_lat": location_lng_lat,
+                    "priority_id": priority_id,
+                },
+            }
+        )
 
     else:
         return RedirectResponse(f"/request-tasks/{request_task.id}", status_code=303)
@@ -142,6 +168,7 @@ async def get_request_task(
             "request_task": request_task,
             "current_user": current_user,
             "current_datetime": datetime.now(),
+            "mapbox": MAPBOX,
         },
     )
 

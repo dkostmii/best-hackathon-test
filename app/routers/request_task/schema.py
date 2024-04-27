@@ -25,3 +25,4 @@ class RequestTaskCreateSchema(BaseModel):
     name: str
     description: str
     ending_at: datetime | None
+    location_lng_lat: str | None
