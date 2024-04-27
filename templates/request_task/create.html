@@ -7,28 +7,78 @@
 {% block content %}
 <div class="container form-container-lg">
     <form class="card d-flex flex-column gap-4 p-4 shadow" action="/request-tasks/create" method="POST" enctype="application/x-www-form-urlencoded">
-        <h2 class="text-center">Create a new task request</h2>
+        <h2 class="text-center text-primary">New help request</h2>
+        <div class="form-group">
+            <label for="title" class="form-label">Title</label>
+            <input class="form-control" type="text" id="title" name="name" placeholder="What you need to help with?" required />
+        </div>
+        <div class="form-group">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" name="description" placeholder="Describe, what is needed to be done in detail." required></textarea>
+        </div>
         <div class="form-group">
             <label for="priority" class="form-label">
                 Priority
             </label>
             <select class="form-select" id="priority" name="priority_id" required>
-                <option value="">Select priority...</option>
+                <option value="">How urgently you need help?</option>
                 {% for priority in priorities %}
                 <option value="{{ priority.id }}">{{ priority.name }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
-            <label for="title" class="form-label">Title</label>
-            <input class="form-control" type="text" id="title" name="name" placeholder="Enter task name" required />
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="set-deadline" />
+                <label class="form-check-label" for="set-deadline">Set deadline</label>
+            </div>
+            <div class="form-text" id="set-deadline-help">
+                Enable "Set deadline" option, if you need help until specific time.
+            </div>
         </div>
-        <div class="form-group">
-            <label for="description" class="form-label">Description</label>
-            <textarea class="form-control" name="description" placeholder="Enter task description" required></textarea>
+        <div class="d-flex justify-content-center">
+            <button class="btn btn-primary">Create help request</button>
         </div>
-        <button class="btn btn-primary btn-block">Create</button>
         {% include 'form_errors.html' %}
     </form>
 </div>
+<script>
+    const set_deadline_input = document.getElementById("set-deadline")
+
+    if (set_deadline_input) {
+        const set_deadline_input_group = set_deadline_input.parentElement.parentElement
+        const form = set_deadline_input_group.parentElement
+
+        set_deadline_input.addEventListener("change", (e) => {
+            const show_deadline_field = set_deadline_input.checked
+
+            if (!show_deadline_field) {
+                const deadline_field = document.getElementById("deadline-field")
+                if (deadline_field) {
+                    deadline_field.parentElement.removeChild(deadline_field)
+                }
+            } else {
+                const form_group = document.createElement("div")
+                form_group.classList.add("form-group", "d-flex", "flex-column", "gap-2")
+                form_group.id = "deadline-field"
+                const form_label = document.createElement("label")
+                form_label.classList.add("form-label")
+                form_label.htmlFor = "ending_at"
+                form_label.appendChild(document.createTextNode("Deadline"))
+                const form_control = document.createElement("input")
+                form_control.type = "datetime-local"
+                form_control.id = "ending_at"
+                form_control.name = "ending_at"
+                form_control.classList.add("form-input", "mw-50-428")
+                form_control.required = true
+                const now = new Date();
+                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                form_control.setAttribute("value", now.toISOString().slice(0, 16))
+
+                form_group.append(form_label, form_control)
+                form.insertBefore(form_group, set_deadline_input_group.nextSibling)
+            }
+        })
+    }
+</script>
 {% endblock %}
