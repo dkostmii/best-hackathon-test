@@ -50,6 +50,3 @@ def load_data_from_json(file_path):
             session.execute(insert(Model).values(mapped_rows))
 
         session.commit()
-
-
-load_data_from_json("data.json")
