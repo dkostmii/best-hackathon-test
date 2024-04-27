@@ -15,7 +15,11 @@ from database import SessionLocal
 templates = Jinja2Templates(directory="templates")
 
 
-def handle_400_errors(request: Request, errors: ValidationError | HTTPException, page: str, context: dict[str, Any] | None = None):
+def handle_400_errors(
+        request: Request,
+        errors: ValidationError | HTTPException,
+        page: str, context: dict[str, Any] | None = None
+):
     errors = errors.errors() if isinstance(errors, ValidationError) else [errors.detail]
 
     default_context = {"request": request, "errors": errors}
