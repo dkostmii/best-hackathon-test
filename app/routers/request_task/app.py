@@ -9,7 +9,16 @@ from starlette.responses import RedirectResponse
 import starlette.status as status
 
 from settings import MAPBOX
-from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, staff_only, templates
+from app.dependencies import (
+    auth_only,
+    get_current_user,
+    get_db,
+    get_done_status,
+    get_sort_by,
+    handle_400_errors,
+    staff_only,
+    templates,
+)
 from app.routers.request_task.crud import PrioritiesCRUD, RequestTaskCRUD
 from app.routers.request_task.schema import RequestTaskCreateSchema
 from app.routers.user.model import User
@@ -33,15 +42,13 @@ async def get_request_tasks(
     db: Session = Depends(get_db),
     current_user: Optional[User] = Depends(get_current_user),
 ):
-    if done_status is not None:
-        done_status = done_status.lower()
-        if done_status not in ['done', 'todo', 'all']:
-            done_status = None
+    """
+    Retrieve a list of request tasks with optional filtering and pagination.
+    """
 
-    if sort_by is not None:
-        sort_by = sort_by.lower()
-        if sort_by not in ['newest', 'oldest', 'ending']:
-            sort_by = None
+    done_status = get_done_status(done_status)
+
+    sort_by = get_sort_by(sort_by)
 
     request_tasks_result = RequestTaskCRUD.get_request_tasks(
         db,
@@ -83,6 +90,10 @@ async def create_request_task_page(
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
+    """
+    Render a webpage containing a form to create a new request task.
+    """
+
     priorities = PrioritiesCRUD.get_priorities(db)
 
     return templates.TemplateResponse(
@@ -108,6 +119,10 @@ async def create_request_task(
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
+    """
+    Create a new request task based on form data.
+    """
+
     try:
         if ending_at and ending_at < datetime.now():
             raise HTTPException(status_code=400, detail="Deadline cannot be in the past.")
@@ -153,6 +168,10 @@ async def get_request_task(
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
+    """
+    Retrieve details of a specific request task by its ID.
+    """
+
     request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
 
     if request_task is None:
@@ -180,6 +199,10 @@ async def done_request_task(
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user)
 ):
+    """
+    Mark a request task as completed.
+    """
+
     request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
 
     if request_task is None:

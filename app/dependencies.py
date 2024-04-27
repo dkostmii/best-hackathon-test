@@ -1,6 +1,6 @@
 from typing import Any
 from functools import wraps
-
+from enum import Enum
 from fastapi import Cookie, Depends, HTTPException, Request
 from fastapi.templating import Jinja2Templates
 from pydantic import ValidationError
@@ -82,3 +82,37 @@ async def get_current_user(session_id: str = Cookie(None), db: Session = Depends
         return None
 
     return user
+
+
+class SortByENUM(Enum):
+    NEWEST = "newest"
+    OLDEST = "oldest"
+    ENDING = "ending"
+
+
+class DoneStatusENUM(Enum):
+    DONE = "done"
+    TODO = "todo"
+    ALL = "all"
+
+
+def get_sort_by(sort_by: str) -> str | None:
+    if sort_by is not None:
+        values = [e.value for e in SortByENUM]
+        if sort_by.lower() not in values:
+            return None
+    else:
+        return None
+
+    return sort_by.lower()
+
+
+def get_done_status(done_status: str) -> str | None:
+    if done_status is not None:
+        values = [e.value for e in DoneStatusENUM]
+        if done_status.lower() not in values:
+            return None
+    else:
+        return None
+
+    return done_status.lower()

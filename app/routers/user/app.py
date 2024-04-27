@@ -8,7 +8,15 @@ from sqlalchemy.orm import Session
 from starlette import status
 from starlette.responses import RedirectResponse
 
-from app.dependencies import auth_only, get_current_user, get_db, handle_400_errors, templates
+from app.dependencies import (
+    auth_only,
+    get_current_user,
+    get_db,
+    get_done_status,
+    get_sort_by,
+    handle_400_errors,
+    templates,
+)
 from app.routers.user.crud import UserCRUD, SessionCRUD
 from app.routers.user.model import User
 from app.routers.user.schema import UserRegistrationSchema, UserLoginSchema
@@ -20,19 +28,16 @@ user_router = APIRouter(
 )
 
 
-@user_router.get("/")
-async def get_users(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    users = UserCRUD.get_users(db)
-
-    return {"users": users}
-
-
 @user_router.get("/register")
 async def create_user_page(
         request: Request,
         is_staff: bool = Query(False),
         current_user: Optional[User] = Depends(get_current_user)
 ):
+    """
+    Render a webpage with a registration form for creating a new user.
+    """
+
     if current_user:
         return RedirectResponse("/", status_code=303)
 
@@ -53,6 +58,10 @@ async def create_user(
         is_staff: bool = Form(False),
         db: Session = Depends(get_db)
 ):
+    """
+    Create a new user based on registration form data.
+    """
+
     try:
         data = UserRegistrationSchema(username=username, password=password, is_staff=is_staff)
         user = UserCRUD.create_user(db, data)
@@ -70,6 +79,10 @@ async def create_user(
 
 @user_router.get("/login")
 async def login_page(request: Request, current_user: Optional[User] = Depends(get_current_user)):
+    """
+    Render a webpage with a login form.
+    """
+
     if current_user:
         return RedirectResponse("/", status_code=303)
 
@@ -88,6 +101,10 @@ async def login(
         password: str = Form(...),
         db: Session = Depends(get_db)
 ):
+    """
+    Authenticate user login based on provided credentials.
+    """
+
     try:
         form_data = UserLoginSchema(username=username, password=password)
         user = UserCRUD.authenticate_user(form_data, db)
@@ -110,6 +127,10 @@ async def logout(
         current_user: Optional[User] = Depends(get_current_user),
         db: Session = Depends(get_db),
 ):
+    """
+    Perform user logout action, deleting authentication session.
+    """
+
     SessionCRUD.delete_all_user_auth_session(current_user, db)
     response.delete_cookie("session_id")
 
@@ -130,18 +151,16 @@ async def get_user(
         db: Session = Depends(get_db),
         current_user: Optional[User] = Depends(get_current_user),
 ):
+    """
+    Retrieve details of a specific user including associated request tasks.
+    """
+
     if not current_user.is_staff and pk != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
 
-    if done_status is not None:
-        done_status = done_status.lower()
-        if done_status not in ['done', 'todo']:
-            done_status = None
+    done_status = get_done_status(done_status)
 
-    if sort_by is not None:
-        sort_by = sort_by.lower()
-        if sort_by not in ['newest', 'oldest', 'ending']:
-            sort_by = None
+    sort_by = get_sort_by(sort_by)
 
     user = UserCRUD.get_user_by_id(pk, db)
     request_tasks_result = RequestTaskCRUD.get_request_tasks(

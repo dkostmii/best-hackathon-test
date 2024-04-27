@@ -14,6 +14,9 @@ app_router.include_router(request_task_router)
 
 @app_router.get("/")
 async def root(request: Request, current_user: User = Depends(get_current_user)):
+    """
+    Render the root endpoint, displaying the base HTML template.
+    """
     return templates.TemplateResponse(
         "base.html",
         {
