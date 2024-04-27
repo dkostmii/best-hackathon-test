@@ -47,6 +47,7 @@
          "name":"Evacuation Assistance for Flooded House",
          "description":"John urgently needs assistance! His house is flooded, and water levels are rising rapidly. Immediate help is required to evacuate",
          "created_at":"2024-04-25T17:20:02.784020",
+         "ending_at":"2024-05-10T17:20:02.784020",
          "done_at":null,
          "is_done":false
       },
@@ -57,6 +58,7 @@
          "name":"Emergency Medical Aid for Unconscious Partner",
          "description":"Sarah is in need of urgent medical assistance! Her partner has collapsed and is unconscious. Immediate medical aid is requested at their location",
          "created_at":"2024-04-25T17:20:20.960185",
+         "ending_at":"2024-05-19T17:20:02.784020",
          "done_at":null,
          "is_done":false
       },
@@ -67,8 +69,9 @@
          "name":"Support for Family Member in Mental Health Crisis",
          "description":"David seeks support for a family member experiencing a mental health crisis. He's looking for guidance on finding nearby counseling services or hotlines for immediate assistance.\r\n",
          "created_at":"2024-04-25T17:20:33.598850",
-         "done_at":null,
-         "is_done":false
+         "ending_at":null,
+         "done_at":"2024-04-27T10:20:33.598850",
+         "is_done":true
       },
       {
          "id":"7511c2f0-8dfa-4512-b1c3-00d7b0ea420c",
@@ -77,6 +80,7 @@
          "name":"Assistance with Flat Tire on Highway",
          "description":"Emily needs help with a flat tire on the highway. Any assistance or advice on changing the tire safely would be greatly appreciated.",
          "created_at":"2024-04-25T17:20:45.406227",
+         "ending_at":"2024-04-26T17:20:45.406227",
          "done_at":null,
          "is_done":false
       },
@@ -87,6 +91,7 @@
          "name":"Book Recommendations for Leisure Reading",
          "description":"Alex is seeking recommendations for a good book to read during leisure time. They are open to any genre suggestions!",
          "created_at":"2024-04-25T17:20:59.393002",
+         "ending_at":null,
          "done_at":null,
          "is_done":false
       }
