@@ -4,34 +4,6 @@
 
 All the documentation is available on the [http://localhost:8000/docs](http://localhost:8000/docs)
 
-Users data:
-
-- Helper
-  - username:
-
-    ```text
-    Helper
-    ```
-
-  - password
-
-    ```text
-    123123123
-    ```
-
-- NeedHelp
-  - username:
-
-    ```text
-    NeedHelp
-    ```
-
-  - password
-
-    ```text
-    123123123
-    ```
-
 ## Development Rules
 
 Run flake8 before pushing
