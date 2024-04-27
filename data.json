@@ -49,7 +49,8 @@
          "created_at":"2024-04-25T17:20:02.784020",
          "ending_at":"2024-05-10T17:20:02.784020",
          "done_at":null,
-         "is_done":false
+         "is_done":false,
+         "location_lng_lat":null
       },
       {
          "id":"b875ba8f-f8a7-4d2c-a2e5-cfc2d9dc08cd",
@@ -60,7 +61,8 @@
          "created_at":"2024-04-25T17:20:20.960185",
          "ending_at":"2024-05-19T17:20:02.784020",
          "done_at":null,
-         "is_done":false
+         "is_done":false,
+         "location_lng_lat":null
       },
       {
          "id":"e25e4fa3-c3cb-46de-962d-56a5d41ee356",
@@ -71,7 +73,8 @@
          "created_at":"2024-04-25T17:20:33.598850",
          "ending_at":null,
          "done_at":"2024-04-27T10:20:33.598850",
-         "is_done":true
+         "is_done":true,
+         "location_lng_lat":"36.22190429687649,49.96616670638585"
       },
       {
          "id":"7511c2f0-8dfa-4512-b1c3-00d7b0ea420c",
@@ -82,7 +85,8 @@
          "created_at":"2024-04-25T17:20:45.406227",
          "ending_at":"2024-04-26T17:20:45.406227",
          "done_at":null,
-         "is_done":false
+         "is_done":false,
+         "location_lng_lat":"36.22190429687649,49.96616670638585"
       },
       {
          "id":"d471c144-1f6b-46c6-abeb-b79567628dc3",
@@ -93,7 +97,8 @@
          "created_at":"2024-04-25T17:20:59.393002",
          "ending_at":null,
          "done_at":null,
-         "is_done":false
+         "is_done":false,
+         "location_lng_lat":null
       }
    ]
 }
