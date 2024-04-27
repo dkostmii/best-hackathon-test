@@ -5,6 +5,8 @@ services:
     command:
       sh -c "alembic upgrade head &&
             python3 -m uvicorn app.main:base_app --host 0.0.0.0 --port 8000 --reload"
+    environment:
+      MAPBOX_ACCESS_TOKEN: "${MAPBOX_ACCESS_TOKEN}"
     volumes:
       - ./:/app
     ports:

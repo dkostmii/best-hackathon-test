@@ -11,6 +11,10 @@ DATABASE = {
     'PORT': str(os.environ.get('PG_PORT', 5432)),
 }
 
+MAPBOX = {
+    'ACCESS_TOKEN': os.environ.get('MAPBOX_ACCESS_TOKEN')
+}
+
 DB_URL = (
     f"postgresql://{DATABASE['USER']}"
     f":{DATABASE['PASSWORD']}"
