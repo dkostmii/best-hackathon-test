@@ -14,10 +14,18 @@
 {% endif %}
     </h4>
     {% if full_info %}
-    <div class="form-group">
-        <label for="description_{{ request_task.id }}" class="form-label">Description</label>
-        <textarea class="form-control" id="description_{{ request_task.id }}" readonly>{{ request_task.description }}</textarea>
-    </div>
+        <div class="form-group">
+            <label for="description_{{ request_task.id }}" class="form-label">Description</label>
+            <textarea class="form-control" id="description_{{ request_task.id }}" readonly>{{ request_task.description }}</textarea>
+        </div>
+        {% if request_task.location_lng_lat %}
+        {% set lng_lat = request_task.location_lng_lat.split(',') %}
+        {% set lng, lat = lng_lat %}
+        <div class="alert alert-info">
+            <p>This task has a specific location.</p>
+            <a class="btn btn-info" href="https://maps.google.com?q={{ lat }},{{ lng }}" target="_blank"><i class="bi bi-geo-alt-fill"></i> View it</a>
+        </div>
+        {% endif %}
     {% endif %}
     <div class="form-group">
         <label for="creator_{{ request_task.id }}" class="form-label">Creator:</label>
