@@ -43,8 +43,8 @@ flake8
 ## Installing using GitHub locally
 
 > **Note**
-> If you want to choose location in the form
-> provide your `MAPBOX_ACCESS_TOKEN` in `.env`.
+> For full functionality, you need to provide all variables in .env
+> 
 > See example in [`.env_example`](./.env_example)
 
 1. Clone the repository:
@@ -96,11 +96,6 @@ flake8
 
 ## Docker
 
-> **Note**
-> If you want to choose location in the form
-> provide your `MAPBOX_ACCESS_TOKEN` in `.env`.
-> See example in [`.env_example`](./.env_example)
->
 > **Prerequesites**
 > Docker should be installed.
 
@@ -110,13 +105,7 @@ flake8
     ./utils/up_server.sh build
     ```
 
-2. Load data to the database:
-
-    ```bash
-    ./utils/up_server.sh load_data
-    ```
-
-3. To run the app:
+2. To run the app:
 
     ```bash
     ./utils/up_server.sh
