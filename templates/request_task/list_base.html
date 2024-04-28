@@ -1,14 +1,14 @@
 <div class="d-flex flex-column gap-3">
     <div class="d-flex justify-content-between align-items-baseline">
-        <h3 class="text-center">Task Requests</h3>
+        <h3 class="text-center display-5 text-primary">Task Requests</h3>
         {% if not current_user.is_staff %}
-        <a href="/request-tasks/create" class="btn btn-primary">Create</a>
+        <a href="/request-tasks/create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Create</a>
         {% endif %}
     </div>
     <div class="card d-flex p-4">
         <div class="d-flex justify-content-between mb-4">
             <h4>Options</h4>
-            <a class="btn btn-outline-danger" href="{{ url_prefix }}/"><i class="bi bi-x"></i> Reset</a>
+            <a class="btn btn-outline-danger" href="{{ url_prefix }}/"><i class="bi bi-x-lg"></i> Reset</a>
         </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="input-group">
@@ -29,8 +29,8 @@
                 <label>Filter</label>
                 <div class="btn-group" id="filter-done-status">
                     <button class="btn {{ 'btn-primary' if not filter.done_status or filter.done_status == 'all' else 'btn-outline-primary' }}" data-done-status="all">All</a>
-                    <button class="btn {{ 'btn-primary' if filter.done_status == 'done' else 'btn-outline-primary' }}" data-done-status="done">Done</a>
-                    <button class="btn {{ 'btn-primary' if filter.done_status == 'todo' else 'btn-outline-primary' }}" data-done-status="todo">ToDo</a>
+                    <button class="btn {{ 'btn-primary' if filter.done_status == 'done' else 'btn-outline-primary' }}" data-done-status="done"><i class="bi bi-check2-circle"></i> Done</a>
+                    <button class="btn {{ 'btn-primary' if filter.done_status == 'todo' else 'btn-outline-primary' }}" data-done-status="todo"><i class="bi bi-list-task"></i> ToDo</a>
                 </div>
             </div>
             <div class="form-group d-flex flex-column mb-4 gap-3">

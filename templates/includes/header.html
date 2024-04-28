@@ -1,11 +1,12 @@
 <header class="shadow-sm text-center py-2 sticky-top bg-body-tertiary">
-  <nav class="container navbar navbar-expand-lg px-4">
+  <nav class="container navbar navbar-expand-lg px-4 gap-2">
       <a class="navbar-brand" href="/#">Help Request Portal</a>
-      <ul class="navbar-nav flex-grow-1">
+      <ul class="navbar-nav flex-grow-1 gap-2">
         {% if current_user %}
           {% if current_user.is_staff %}
           <li class="nav-item"><a class="btn btn-primary" href="/request-tasks">View task requests</a></li>
           {% else %}
+          <li class="nav-item"><a class="nav-link" href="/users/{{ current_user.id }}">My requests</a></li>
           <li class="nav-item"><a class="btn btn-primary" href="/request-tasks/create">Create help request</a></li>
           {% endif %}
         {% endif %}
@@ -17,10 +18,10 @@
             {{ current_user.username }}
         </a>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/users/{{ current_user.id }}">Profile</a></li>
+            <li><a class="dropdown-item" href="/users/{{ current_user.id }}"><i class="bi bi-person-circle"></i> Profile</a></li>
             <li>
               <form action="/users/logout" method="POST">
-                <button type="submit" class="dropdown-item">Logout</button>
+                <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-left"></i> Logout</button>
               </form>
             </li>
         </ul>
