@@ -20,7 +20,8 @@ async def not_found_handler(request: Request, exc: HTTPException):
             "request": request,
             "error": {"title": "Not found", "description": exc.detail, "status": exc.status_code},
             "no_auth_controls": True,
-        }
+        },
+        status_code=exc.status_code,
     )
 
 
@@ -32,5 +33,6 @@ async def server_error_handler(request: Request, exc: HTTPException):
             "request": request,
             "error": {"title": "Server error occurred", "description": exc.detail, "status": exc.status_code},
             "no_auth_controls": True,
-        }
+        },
+        status_code=exc.status_code,
     )
