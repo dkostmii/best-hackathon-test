@@ -11,6 +11,7 @@ base_app = FastAPI(
 )
 base_app.include_router(app_router)
 
+
 @base_app.exception_handler(404)
 async def not_found_handler(request: Request, exc: HTTPException):
     return templates.TemplateResponse(

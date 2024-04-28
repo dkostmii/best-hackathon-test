@@ -14,7 +14,7 @@ def handle():
 
     while True:
         try:
-            with engine.connect() as connection:
+            with engine.connect():
                 print("Database available!")
                 break
         except OperationalError:
