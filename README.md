@@ -1,5 +1,11 @@
 # best-hackathon-test
 
+This portal facilitates the process of providing assistance to people in need, making it easier to connect those who provide help.
+
+> *Connect with kindness: Post your help requests and lend a hand to those in need.*
+
+![Home page of the website](./img/home_page.png)
+
 ## Documentation
 
 All the documentation is available on the [http://localhost:8000/docs](http://localhost:8000/docs)
@@ -16,7 +22,7 @@ flake8
 
 > **Note**
 > For full functionality, you need to provide all variables in .env
-> 
+>
 > See example in [`.env_example`](./.env_example)
 
 1. Clone the repository:
