@@ -3,21 +3,12 @@ from uuid import UUID
 
 from pydantic import BaseModel
 
-from app.routers.user.schema import UserSchema
+# from app.routers.user.schema import UserSchema
 
 
 class PrioritySchema(BaseModel):
     id: int
     name: str
-
-
-class RequestTaskSchema(BaseModel):
-    id: UUID
-    priority: PrioritySchema
-    name: str
-    description: str
-    created_at: datetime
-    creator: UserSchema
 
 
 class RequestTaskCreateSchema(BaseModel):
@@ -26,3 +17,7 @@ class RequestTaskCreateSchema(BaseModel):
     description: str
     ending_at: datetime | None
     location_lng_lat: str | None
+
+
+class RequestTaskSchema(RequestTaskCreateSchema):
+    id: UUID

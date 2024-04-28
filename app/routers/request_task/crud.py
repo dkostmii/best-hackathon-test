@@ -8,7 +8,7 @@ from sqlalchemy import asc, desc
 from sqlalchemy.orm import Session
 
 from app.routers.request_task.model import Priority, RequestTask
-from app.routers.request_task.schema import RequestTaskCreateSchema
+from app.routers.request_task.schema import RequestTaskCreateSchema, RequestTaskSchema
 from app.routers.user.model import User
 
 T = TypeVar("T")
@@ -100,6 +100,18 @@ class RequestTaskCRUD:
         db.refresh(request_task)
 
         return request_task
+
+    @staticmethod
+    def update_request_task(data: RequestTaskSchema, creator: User, db: Session):
+        task_in_db: RequestTask = db.query(RequestTask).filter_by(id=data.id).first()
+
+        task_in_db.name = data.name
+        task_in_db.description = data.description
+        task_in_db.priority_id = data.priority_id
+        task_in_db.location_lng_lat = data.location_lng_lat
+
+        db.commit()
+        db.refresh(task_in_db)
 
     @staticmethod
     def done_request_task(request_task: RequestTask, db: Session):

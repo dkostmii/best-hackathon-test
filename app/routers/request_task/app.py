@@ -20,7 +20,7 @@ from app.dependencies import (
     templates,
 )
 from app.routers.request_task.crud import PrioritiesCRUD, RequestTaskCRUD
-from app.routers.request_task.schema import RequestTaskCreateSchema
+from app.routers.request_task.schema import RequestTaskCreateSchema, RequestTaskSchema
 from app.routers.user.model import User
 
 request_task_router = APIRouter(
@@ -105,6 +105,61 @@ async def create_request_task_page(
             "mapbox": MAPBOX,
         },
     )
+
+
+@request_task_router.post("/update/{pk}")
+@auth_only
+async def update_request_task(
+        request: Request,
+        pk: UUID,
+        priority_id: int = Form(...),
+        name: str = Form(...),
+        description: str = Form(...),
+        ending_at: Optional[datetime] = Form(None),
+        location_lng_lat: Optional[str] = Form(None),
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
+):
+    """
+    Create a new request task based on form data.
+    """
+
+    try:
+        if ending_at and ending_at < datetime.now():
+            raise HTTPException(status_code=400, detail="Deadline cannot be in the past.")
+
+        data = RequestTaskSchema(
+            id=pk,
+            priority_id=priority_id,
+            name=name,
+            description=description,
+            ending_at=ending_at,
+            location_lng_lat=location_lng_lat
+        )
+
+        RequestTaskCRUD.update_request_task(data, current_user, db)
+
+    except (ValidationError, HTTPException) as e:
+        priorities = PrioritiesCRUD.get_priorities(db)
+        return handle_400_errors(
+            request,
+            e,
+            "request_task/create.html",
+            context={
+                "priorities": priorities,
+                "mapbox": MAPBOX,
+                "form": {
+                    "name": name,
+                    "description": description,
+                    "ending_at": ending_at,
+                    "location_lng_lat": location_lng_lat,
+                    "priority_id": priority_id,
+                },
+            }
+        )
+
+    else:
+        return RedirectResponse(f"/request-tasks/{pk}", status_code=303)
 
 
 @request_task_router.post("/create")
