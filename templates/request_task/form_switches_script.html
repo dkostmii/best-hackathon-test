@@ -1,0 +1,147 @@
+<script>
+    const set_deadline_input = document.getElementById("set-deadline")
+    const set_location_input = document.getElementById("set-location")
+
+    if (set_deadline_input) {
+        const set_deadline_input_group = set_deadline_input.parentElement.parentElement
+        const form = set_deadline_input_group.parentElement
+
+        set_deadline_input.addEventListener("change", (e) => {
+            const show_deadline_field = set_deadline_input.checked
+
+            if (!show_deadline_field) {
+                const deadline_field = document.getElementById("deadline-field")
+                if (deadline_field) {
+                    deadline_field.parentElement.removeChild(deadline_field)
+                }
+            } else {
+                const prev_value = "{{ form.ending_at if form and form.ending_at else 'None' }}"
+                const form_group = document.createElement("div")
+                form_group.classList.add("form-group", "d-flex", "flex-column", "gap-2")
+                form_group.id = "deadline-field"
+                const form_label = document.createElement("label")
+                form_label.classList.add("form-label")
+                form_label.htmlFor = "ending_at"
+                form_label.appendChild(document.createTextNode("Deadline"))
+                const form_control = document.createElement("input")
+                form_control.type = "datetime-local"
+                form_control.id = "ending_at"
+                form_control.name = "ending_at"
+                form_control.classList.add("form-input", "mw-50-428")
+                form_control.required = true
+
+                if (prev_value !== "None") {
+                    let iso_value = new Date(prev_value)
+                    iso_value = iso_value.toISOString().slice(0, 16)
+                    form_control.value = iso_value
+                } else {
+                    const now = new Date()
+                    now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+                    form_control.value = now.toISOString().slice(0, 16)
+                }
+
+                form_group.append(form_label, form_control)
+                form.insertBefore(form_group, set_deadline_input_group.nextSibling)
+            }
+        })
+    }
+
+    if (set_location_input) {
+        const set_location_input_group = set_location_input.parentElement.parentElement
+        const form = set_location_input_group.parentElement
+
+        set_location_input.addEventListener("change", (e) => {
+            const show_location_field = set_location_input.checked
+
+            if (!show_location_field) {
+                const location_field = document.getElementById("location-field")
+                if (location_field) {
+                    location_field.parentElement.removeChild(location_field)
+                }
+            } else {
+                const prev_value = "{{ form.location_lng_lat if form and form.location_lng_lat else '' }}"
+                const lngLat = {lng: 30.52, lat: 50.45}
+
+                if (prev_value) {
+                    let [lng, lat] = prev_value.split(",")
+                    try {
+                        lng = parseFloat(lng.trim())
+                        lat = parseFloat(lat.trim())
+                        lngLat.lng = lng
+                        lngLat.lat = lat
+                    } catch {
+                    }
+                }
+
+                const form_group = document.createElement("div")
+                form_group.classList.add("form-group", "d-flex", "flex-column", "gap-2")
+                form_group.id = "location-field"
+                const form_label = document.createElement("label")
+                form_label.classList.add("form-label")
+                form_label.appendChild(document.createTextNode("Location"))
+
+                const input_group = document.createElement("div")
+                input_group.classList.add("input-group")
+
+                const form_control = document.createElement("input")
+                form_control.type = 'text'
+                form_control.id = 'location'
+                form_control.name = 'location_lng_lat'
+                form_control.placeholder = 'Choose location by placing a marker on the map below.'
+                form_control.classList.add("form-control")
+                form_control.required = true
+                form_control.readOnly = true
+                if (prev_value) {
+                    form_control.value = prev_value
+                }
+
+                const btn_reset = document.createElement("button")
+                btn_reset.type = 'button'
+                btn_reset.classList.add('btn', 'btn-danger')
+                const x_icon = document.createElement("i")
+                x_icon.classList.add("bi", "bi-x")
+                const btn_reset_caption = document.createTextNode(" Reset")
+
+                btn_reset.append(x_icon, btn_reset_caption)
+
+                input_group.append(form_control, btn_reset)
+
+                const map_element = document.createElement("div")
+                map_element.id = 'map'
+
+                form_group.append(form_label, input_group, map_element)
+                form.insertBefore(form_group, set_location_input_group.nextSibling)
+
+                mapboxgl.accessToken = "{{ mapbox.ACCESS_TOKEN }}"
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+                    center: Object.values(lngLat), // starting position [lng, lat]
+                    zoom: 5, // starting zoom
+                    projection: 'mercator',
+                });
+
+                let existingMarker = null
+                if (prev_value) {
+                    existingMarker = new mapboxgl.Marker().setLngLat(Object.values(lngLat)).addTo(map)
+                }
+
+                map.on('click', (e) => {
+                    if (existingMarker !== null) {
+                        existingMarker.remove()
+                    }
+                    existingMarker = new mapboxgl.Marker().setLngLat(Object.values(e.lngLat)).addTo(map)
+
+                    const { lng: longitude, lat: latitude } = e.lngLat
+                    form_control.value = `${longitude},${latitude}`
+                })
+                btn_reset.addEventListener("click", () => {
+                    form_control.value = ""
+                    if (existingMarker !== null) {
+                        existingMarker.remove()
+                    }
+                })
+            }
+        })
+    }
+</script>

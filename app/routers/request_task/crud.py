@@ -102,13 +102,14 @@ class RequestTaskCRUD:
         return request_task
 
     @staticmethod
-    def update_request_task(data: RequestTaskSchema, creator: User, db: Session):
+    def update_request_task(data: RequestTaskSchema, db: Session):
         task_in_db: RequestTask = db.query(RequestTask).filter_by(id=data.id).first()
 
         task_in_db.name = data.name
         task_in_db.description = data.description
         task_in_db.priority_id = data.priority_id
         task_in_db.location_lng_lat = data.location_lng_lat
+        task_in_db.ending_at = data.ending_at
 
         db.commit()
         db.refresh(task_in_db)

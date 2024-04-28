@@ -11,12 +11,13 @@ import starlette.status as status
 from settings import MAPBOX
 from app.dependencies import (
     auth_only,
+    user_only,
+    staff_only,
     get_current_user,
     get_db,
     get_done_status,
     get_sort_by,
     handle_400_errors,
-    staff_only,
     templates,
 )
 from app.routers.request_task.crud import PrioritiesCRUD, RequestTaskCRUD
@@ -107,8 +108,49 @@ async def create_request_task_page(
     )
 
 
+@request_task_router.get("/update/{pk}")
+@user_only
+async def update_request_task_page(
+        request: Request,
+        pk: UUID,
+        db: Session = Depends(get_db),
+        current_user: Optional[User] = Depends(get_current_user)
+):
+    """
+    Render a webpage containing a form to edit specific request task, identified by its ID.
+    """
+
+    request_task = RequestTaskCRUD.get_request_task_by_id(pk, db)
+
+    if request_task is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Request task with id {pk} does not exist")
+
+    if request_task.creator.id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
+
+    priorities = PrioritiesCRUD.get_priorities(db)
+
+    return templates.TemplateResponse(
+        "request_task/update.html",
+        {
+            "request": request,
+            "form": {
+                "id": pk,
+                "name": request_task.name,
+                "description": request_task.description,
+                "ending_at": request_task.ending_at,
+                "location_lng_lat": request_task.location_lng_lat,
+                "priority_id": request_task.priority_id,
+            },
+            "priorities": priorities,
+            "current_user": current_user,
+            "mapbox": MAPBOX,
+        },
+    )
+
+
 @request_task_router.post("/update/{pk}")
-@auth_only
+@user_only
 async def update_request_task(
         request: Request,
         pk: UUID,
@@ -137,18 +179,19 @@ async def update_request_task(
             location_lng_lat=location_lng_lat
         )
 
-        RequestTaskCRUD.update_request_task(data, current_user, db)
+        RequestTaskCRUD.update_request_task(data, db)
 
     except (ValidationError, HTTPException) as e:
         priorities = PrioritiesCRUD.get_priorities(db)
         return handle_400_errors(
             request,
             e,
-            "request_task/create.html",
+            "request_task/update.html",
             context={
                 "priorities": priorities,
                 "mapbox": MAPBOX,
                 "form": {
+                    "id": pk,
                     "name": name,
                     "description": description,
                     "ending_at": ending_at,

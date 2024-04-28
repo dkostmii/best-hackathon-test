@@ -48,6 +48,22 @@ def auth_only(func):
     return wrapper
 
 
+def user_only(func):
+    @wraps(func)
+    async def wrapper(*args, **kwargs):
+        current_user = kwargs.get("current_user")
+
+        if current_user is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="You must be logged in")
+
+        if current_user.is_staff is True:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You are not allowed to access this page")
+
+        return await func(*args, **kwargs)
+
+    return wrapper
+
+
 def staff_only(func):
     @wraps(func)
     async def wrapper(*args, **kwargs):

@@ -8,13 +8,16 @@
 <div class="container">
     <div class="row">
         <div class="col-md-8 offset-md-2 task-list-container">
-            <div class="w-100 d-flex justify-content-end mb-4">
+            <div class="w-100 d-flex justify-content-between mb-4">
                 {% if current_user.is_staff %}
                     {% set back_button_url = "/request-tasks" %}
                 {% else %}
                     {% set back_button_url = "/users/"~current_user.id %}
                 {% endif %}
-                <a href="{{ back_button_url }}" class="btn btn-outline-primary">Back</a>
+                <a href="{{ back_button_url }}" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Back</a>
+                {% if current_user.id == request_task.creator_id %}
+                <a href="/request-tasks/update/{{ request_task.id }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+                {% endif %}
             </div>
             {% with full_info=True %}
             {% include 'request_task/card.html' %}
