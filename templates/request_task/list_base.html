@@ -12,53 +12,25 @@
         </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div class="input-group">
-                {% if filter.text_search %}
-                <input type="text" class="form-control" id="search-input" placeholder="Search..." value="{{ filter.text_search }}" />
-                {% else %}
-                <input type="text" class="form-control" id="search-input" placeholder="Search..." />
-                {% endif %}
+                <input type="text" class="form-control" id="search-input" placeholder="Keywords, decsribing help request, for example &quot;emergency medical aid&quot;" {{ 'value='~filter.text_search if filter.text_search else '' }} />
                 <button type="button" class="btn btn-primary" id="search-btn"><i class="bi bi-search"></i> Search</button>
             </div>
         </div>
         <div class="d-flex justify-content-between gap-3 flex-wrap">
             <div class="d-flex flex-column justify-content-end align-items-baseline mb-4 gap-3">
                 <label>Display per page</label>
-                <div class="btn-group">
-                    {% if request_tasks.pagination.current_limit == 10 %}
-                    <a class="btn btn-primary" href="#">10</a>
-                    {% else %}
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=10">10</a>
-                    {% endif %}
-
-                    {% if request_tasks.pagination.current_limit == 20 %}
-                    <a class="btn btn-primary" href="#">20</a>
-                    {% else %}
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=20">20</a>
-                    {% endif %}
-
-                    {% if request_tasks.pagination.current_limit == 50 %}
-                    <a class="btn btn-primary" href="#">50</a>
-                    {% else %}
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?page=1&limit=50">50</a>
-                    {% endif %}
+                <div class="btn-group" id="display-per-page">
+                    <button class="btn {{ 'btn-primary' if not request_tasks.pagination.current_limit or request_tasks.pagination.current_limit == 10 else 'btn-outline-primary' }}" data-display-per-page="10">10</button>
+                    <button class="btn {{ 'btn-primary' if request_tasks.pagination.current_limit == 20 else 'btn-outline-primary' }}" data-display-per-page="20">20</button>
+                    <button class="btn {{ 'btn-primary' if request_tasks.pagination.current_limit == 50 else 'btn-outline-primary' }}" data-display-per-page="50">50</button>
                 </div>
             </div>
             <div class="d-flex flex-column justify-content-end align-items-baseline mb-4 gap-3">
                 <label>Filter</label>
-                <div class="btn-group">
-                    {% if filter.done_status == "todo" %}
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
-                    <a class="btn btn-primary" href="#">ToDo</a>
-                    {% elif filter.done_status == "done" %}
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}">All</a>
-                    <a class="btn btn-primary" href="#">Done</a>
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
-                    {% else %}
-                    <a class="btn btn-primary" href="#">All</a>
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=done">Done</a>
-                    <a class="btn btn-outline-primary" href="{{ url_prefix }}/?limit={{ request_tasks.pagination.current_limit }}&done_status=todo">ToDo</a>
-                    {% endif %}
+                <div class="btn-group" id="filter-done-status">
+                    <button class="btn {{ 'btn-primary' if not filter.done_status or filter.done_status == 'all' else 'btn-outline-primary' }}" data-done-status="all">All</a>
+                    <button class="btn {{ 'btn-primary' if filter.done_status == 'done' else 'btn-outline-primary' }}" data-done-status="done">Done</a>
+                    <button class="btn {{ 'btn-primary' if filter.done_status == 'todo' else 'btn-outline-primary' }}" data-done-status="todo">ToDo</a>
                 </div>
             </div>
             <div class="form-group d-flex flex-column mb-4 gap-3">
@@ -125,22 +97,26 @@
         return result
     }
 
+    const filter_done_status = document.getElementById("filter-done-status")
+    const display_per_page = document.getElementById("display-per-page")
     const sort_priority_select = document.getElementById("sort-priority")
     const sort_dates_select = document.getElementById("sort-dates")
     const search_input = document.getElementById("search-input")
     const search_btn = document.getElementById("search-btn")
     let current_priority = null
     let current_sort_dates_value = null
-    const current_limit = "{{ request_tasks.pagination.current_limit }}"
-    const done_status = "{{ filter.done_status }}"
+    let current_done_status = "{{ filter.done_status if filter.done_status else '' }}"
+    let current_limit = "{{ request_tasks.pagination.current_limit }}"
     const base_url = `${window.location.origin}{{ url_prefix }}`
-    const query_params = {
-        limit: current_limit,
-    }
+    const query_params = {}
 
     function updatePage() {
-        if (done_status !== "None") {
-            query_params.done_status = done_status
+        if (current_done_status) {
+            query_params.done_status = current_done_status
+        }
+
+        if (current_limit) {
+            query_params.limit = current_limit
         }
 
         if (sort_priority_select.value) {
@@ -157,6 +133,24 @@
 
         const query_param_string = getQueryParamString(query_params)
         window.location.href = `${base_url}${query_param_string}`
+    }
+
+    if (filter_done_status) {
+        for (const done_status_button of filter_done_status.children) {
+            done_status_button.addEventListener("click", (e) => {
+                current_done_status = done_status_button.dataset.doneStatus
+                updatePage()
+            })
+        }
+    }
+
+    if (display_per_page) {
+        for (const button of display_per_page.children) {
+            button.addEventListener("click", (e) => {
+                current_limit = button.dataset.displayPerPage
+                updatePage()
+            })
+        }
     }
 
     if (sort_priority_select) {
