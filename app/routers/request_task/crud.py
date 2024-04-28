@@ -48,12 +48,22 @@ class RequestTaskCRUD:
         tasks = tasks.filter(RequestTask.name.ilike(f"%{text_search}%")) if text_search is not None else tasks
         tasks = tasks.filter(RequestTask.is_done.is_(is_done)) if is_done is not None else tasks
         tasks = tasks.filter_by(creator_id=creator_id) if creator_id is not None else tasks
-        tasks = tasks.order_by(desc(RequestTask.created_at)) if sort_by == 'newest' else tasks
-        tasks = tasks.order_by(asc(RequestTask.created_at)) if sort_by == 'oldest' else tasks
-        tasks = tasks.order_by(asc(RequestTask.ending_at)) if sort_by == 'ending' else tasks
+
+        order_by_clauses = []
+
+        if priority_id is not None:
+            order_by_clauses.append(desc(RequestTask.priority_id == priority_id))
+
+        if sort_by == 'newest':
+            order_by_clauses.append(desc(RequestTask.created_at))
+        elif sort_by == 'oldest':
+            order_by_clauses.append(asc(RequestTask.created_at))
+        elif sort_by == 'ending':
+            order_by_clauses.append(asc(RequestTask.ending_at))
+
         tasks = (
-            tasks.join(Priority).order_by(desc(RequestTask.priority_id == priority_id)).all()
-            if priority_id is not None
+            tasks.order_by(*order_by_clauses).all()
+            if len(order_by_clauses) > 0
             else tasks.all()
         )
 
