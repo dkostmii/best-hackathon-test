@@ -1,1 +1,1 @@
-docker-compose run migration alembic downgrade -1
+docker compose run migration alembic downgrade -1

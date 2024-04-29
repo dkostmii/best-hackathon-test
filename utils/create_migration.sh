@@ -3,4 +3,4 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-docker-compose run migration alembic revision --autogenerate -m "$1"
+docker compose run migration alembic revision --autogenerate -m "$1"
